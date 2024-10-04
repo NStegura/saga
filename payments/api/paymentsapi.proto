@@ -1,17 +1,13 @@
 syntax = "proto3";
 package paymentsapi;
-import "google/api/empty.proto";
-option go_package = "gitlab.ozon.dev/NStegura/homework-4/payments/api";
+option go_package = "github.com/NStegura/saga/payments/api";
+
+import "google/protobuf/empty.proto";
+
 
 
 service PaymentsApi {
-
-  rpc CreatePayment(OrderId) returns (Id) {}
-
-  rpc GetPaymentByOrderID(OrderId) returns (Payment) {}
-
   rpc UpdatePaymentStatus(PayStatus) returns (google.protobuf.Empty) {}
-
   rpc GetPing(google.protobuf.Empty) returns (Pong) {}
 }
 
@@ -21,12 +17,6 @@ message Id {
 
 message OrderId {
   int64 order_id = 1;
-}
-
-message Payment {
-  int64 pay_id = 1;
-  int64 order_id = 2;
-  bool status = 3;
 }
 
 message PayStatus {

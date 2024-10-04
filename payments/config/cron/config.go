@@ -1,18 +1,21 @@
-package server
+package cron
 
 import (
 	"github.com/kelseyhightower/envconfig"
 	"gopkg.in/yaml.v3"
 	"os"
+	"time"
 )
 
 type Config struct {
-	Server Server `envconfig:"SERVER"`
-	DB     DB     `envconfig:"DB"`
+	PushJob PushJob `envconfig:"CRON"`
+	DB      DB      `envconfig:"DB"`
 }
 
-type Server struct {
-	GRPCAddr string `envconfig:"GRPC_ADDR" default:"localhost:8081"`
+type PushJob struct {
+	Frequency   time.Duration `envconfig:"FREQUENCY" default:"10s"`
+	RateLimit   int           `envconfig:"RATE_LIMIT" default:"2"`
+	EventsLimit int           `envconfig:"EVENTS_LIMIT" default:"20"`
 }
 
 type DB struct {

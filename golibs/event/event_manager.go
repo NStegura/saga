@@ -1,34 +1,42 @@
 package event
 
 import (
-	"events/repo"
-	events "events/sender"
-	"events/service"
+	"github.com/NStegura/saga/golibs/event/repo"
+	"github.com/NStegura/saga/golibs/event/sender"
+	"github.com/NStegura/saga/golibs/event/service"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 	"time"
 )
 
+const (
+	defaultFrequency   = 5 * time.Second
+	defaultRateLimit   = 1
+	defaultEventsLimit = 50
+	defaultReserve     = 60 * time.Second
+)
+
 // NewPushEventsWorker иницилизирует задачу
 // по получению эвентов для дальнейшей отправки.
 func NewPushEventsWorker(
-	frequency time.Duration,
-	rateLimit int,
-	eventsLimit int,
-	reserve time.Duration,
-	producer events.Producer,
-	event events.Event,
+	producer sender.Producer,
+	event sender.Event,
 	logger *logrus.Logger,
-) *events.PushEventsWorker {
-	return &events.PushEventsWorker{
-		Frequency:   frequency,
-		RateLimit:   rateLimit,
-		EventsLimit: eventsLimit,
-		Reserve:     reserve,
+	options ...Option,
+) *sender.PushEventsWorker {
+	s := &sender.PushEventsWorker{
+		Frequency:   defaultFrequency,
+		RateLimit:   defaultRateLimit,
+		EventsLimit: defaultEventsLimit,
+		Reserve:     defaultReserve,
 		Producer:    producer,
 		Event:       event,
 		Logger:      logger,
 	}
+	for _, opt := range options {
+		opt(s)
+	}
+	return s
 }
 
 // NewEventService инициализует бизнес слой.

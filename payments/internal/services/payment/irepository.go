@@ -21,13 +21,17 @@ type Repository interface {
 		orderID int64,
 		forUpdate bool,
 	) (payment dbModels.Payment, err error)
-	CreateOutbox(
-		ctx context.Context,
-		tx pgx.Tx,
-		payload json.RawMessage,
-	) (err error)
 
 	OpenTransaction(ctx context.Context) (tx pgx.Tx, err error)
 	Rollback(ctx context.Context, tx pgx.Tx) error
 	Commit(ctx context.Context, tx pgx.Tx) error
+}
+
+type EventRepository interface {
+	CreateEvent(
+		ctx context.Context,
+		tx pgx.Tx,
+		topic string,
+		payload json.RawMessage,
+	) (err error)
 }

@@ -6,29 +6,31 @@ import (
 	"fmt"
 	"github.com/NStegura/saga/payments/internal/repo/models"
 	"github.com/jackc/pgx/v5"
+	"time"
 )
 
-func (db *DB) CreateOutbox(
+func (db *DB) CreateEvent(
 	ctx context.Context,
 	tx pgx.Tx,
+	eventType string,
 	payload json.RawMessage,
 ) (err error) {
 	var id int64
 	const query = `
-		INSERT INTO "outbox" (payload, status) 
+		INSERT INTO "event" (event_type, payload) 
 		VALUES ($1, $2) 
 		RETURNING id;
 	`
 
 	err = tx.QueryRow(ctx, query,
+		eventType,
 		payload,
-		models.WAIT,
 	).Scan(&id)
 
 	if err != nil {
-		return fmt.Errorf("CreateOutbox failed, %w", err)
+		return fmt.Errorf("CreateEvent failed, %w", err)
 	}
-	db.logger.Debugf("Create outbox, id, %v", id)
+	db.logger.Debugf("Create event, id, %v", id)
 	return
 }
 
@@ -36,15 +38,15 @@ func (db *DB) GetNotProcessedEvents(
 	ctx context.Context,
 	tx pgx.Tx,
 	limit int64,
-) (messages []models.OutboxEntry, err error) {
+) (messages []models.EventEntry, err error) {
 	var rows pgx.Rows
 
 	const query = `
-		SELECT id, payload, status
-		FROM "outbox"
-		WHERE status = 'WAIT' 
+		SELECT id, payload, topic, status
+		FROM "event"
+		WHERE (status = 'WAIT' OR reserved_to < NOW())
 		ORDER BY created_at ASC 
-		LIMIT $1 
+		LIMIT $1
 		FOR UPDATE SKIP LOCKED;
 	`
 
@@ -54,7 +56,7 @@ func (db *DB) GetNotProcessedEvents(
 	}
 
 	for rows.Next() {
-		var o models.OutboxEntry
+		var o models.EventEntry
 		err = rows.Scan(
 			&o.ID,
 			&o.Payload,
@@ -73,15 +75,37 @@ func (db *DB) GetNotProcessedEvents(
 	return messages, nil
 }
 
-func (db *DB) UpdateOutboxEvents(ctx context.Context, tx pgx.Tx, messageIDs []int64) (err error) {
+func (db *DB) UpdateReservedTimeEvents(
+	ctx context.Context,
+	tx pgx.Tx,
+	eventsIDs []int64,
+	reservedTo time.Time,
+) (err error) {
 	const query = `
-		UPDATE outbox 
-        SET status = 'DONE' 
+		UPDATE event
+        SET reserved_to = $2
         WHERE id = ANY($1)
 	`
-	_, err = tx.Exec(ctx, query, messageIDs)
+	_, err = tx.Exec(ctx, query, eventsIDs, reservedTo)
 	if err != nil {
-		return fmt.Errorf("UpdateOutboxEvents failed, %w", err)
+		return fmt.Errorf("UpdateReservedTimeEvents failed, %w", err)
+	}
+	return nil
+}
+
+func (db *DB) UpdateEventStatusToDone(
+	ctx context.Context,
+	tx pgx.Tx,
+	eventID int64,
+) (err error) {
+	const query = `
+		UPDATE event
+        SET status = 'DONE', reserved_to = NULL
+        WHERE id = $1
+	`
+	_, err = tx.Exec(ctx, query, eventID)
+	if err != nil {
+		return fmt.Errorf("UpdateEventStatusToDone failed, %w", err)
 	}
 	return nil
 }

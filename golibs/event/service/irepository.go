@@ -1,9 +1,10 @@
-package events
+package service
 
 import (
 	"context"
-	dbModels "github.com/NStegura/saga/payments/internal/repo/models"
+	"events/repo/models"
 	"github.com/jackc/pgx/v5"
+	"time"
 )
 
 type Repository interface {
@@ -11,8 +12,18 @@ type Repository interface {
 		ctx context.Context,
 		tx pgx.Tx,
 		limit int64,
-	) (messages []dbModels.OutboxEntry, err error)
-	UpdateOutboxEvents(ctx context.Context, tx pgx.Tx, messageIDs []int64) (err error)
+	) (messages []models.EventEntry, err error)
+	UpdateReservedTimeEvents(
+		ctx context.Context,
+		tx pgx.Tx,
+		eventsIDs []int64,
+		reservedTo time.Time,
+	) (err error)
+	UpdateEventStatusToDone(
+		ctx context.Context,
+		tx pgx.Tx,
+		eventID int64,
+	) (err error)
 
 	OpenTransaction(ctx context.Context) (tx pgx.Tx, err error)
 	Rollback(ctx context.Context, tx pgx.Tx) error

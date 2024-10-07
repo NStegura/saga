@@ -10,16 +10,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	topic = "payment"
+)
+
 type Payment struct {
-	repo   Repository
-	logger *logrus.Logger
+	repo      Repository
+	eventRepo EventRepository
+	logger    *logrus.Logger
 }
 
 func New(repo Repository, logger *logrus.Logger) *Payment {
 	return &Payment{repo: repo, logger: logger}
 }
 
-func (p *Payment) CreatePaymentWithOutbox(ctx context.Context, orderID int64) (id int64, err error) {
+func (p *Payment) CreatePayment(ctx context.Context, orderID int64) (id int64, err error) {
 	tx, err := p.repo.OpenTransaction(ctx)
 	if err != nil {
 		return id, fmt.Errorf("failed to open transaction, %w", err)
@@ -45,15 +50,17 @@ func (p *Payment) CreatePaymentWithOutbox(ctx context.Context, orderID int64) (i
 		return id, fmt.Errorf("failed to marshal payment message: %w", err)
 	}
 
-	err = p.repo.CreateOutbox(ctx, tx, payload)
+	err = p.eventRepo.CreateEvent(ctx, tx, topic, payload)
 	if err != nil {
 		_ = p.repo.Rollback(ctx, tx)
-		return id, fmt.Errorf("failed to create outbox: %w", err)
+		return id, fmt.Errorf("failed to create event: %w", err)
 	}
 	return payID, err
 }
 
-func (p *Payment) UpdatePaymentStatusWithOutbox(ctx context.Context, orderID int64, status models.PaymentMessageStatus) (err error) {
+func (p *Payment) UpdatePaymentStatus(ctx context.Context, orderID int64, status models.PaymentMessageStatus) (err error) {
+	var dbStatus dbModels.PaymentStatus
+
 	tx, err := p.repo.OpenTransaction(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to open transaction, %w", err)
@@ -68,7 +75,6 @@ func (p *Payment) UpdatePaymentStatusWithOutbox(ctx context.Context, orderID int
 		return fmt.Errorf("failed to get payment by order id for update: %w", err)
 	}
 
-	var dbStatus dbModels.PaymentStatus
 	if status == models.COMPLETED {
 		dbStatus = dbModels.COMPLETED
 	} else if status == models.FAILED {
@@ -95,11 +101,10 @@ func (p *Payment) UpdatePaymentStatusWithOutbox(ctx context.Context, orderID int
 		_ = p.repo.Rollback(ctx, tx)
 		return fmt.Errorf("failed to marshal payment message: %w", err)
 	}
-
-	err = p.repo.CreateOutbox(ctx, tx, payload)
+	err = p.eventRepo.CreateEvent(ctx, tx, topic, payload)
 	if err != nil {
 		_ = p.repo.Rollback(ctx, tx)
-		return fmt.Errorf("failed to create outbox: %w", err)
+		return fmt.Errorf("failed to create event: %w", err)
 	}
 	return
 }

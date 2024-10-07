@@ -61,7 +61,7 @@ func (s *GRPCServer) UpdatePaymentStatus(ctx context.Context, req *pb.PayStatus)
 	} else if !req.Status {
 		paymentStatus = models.FAILED
 	}
-	if err := s.payments.UpdatePaymentStatusWithOutbox(ctx, req.OrderId, paymentStatus); err != nil {
+	if err := s.payments.UpdatePaymentStatus(ctx, req.OrderId, paymentStatus); err != nil {
 		return &emptypb.Empty{}, err
 	}
 	return &emptypb.Empty{}, nil

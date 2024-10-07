@@ -4,7 +4,6 @@ import (
 	"github.com/NStegura/saga/golibs/event/repo"
 	"github.com/NStegura/saga/golibs/event/sender"
 	"github.com/NStegura/saga/golibs/event/service"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -52,11 +51,9 @@ func NewEventService(
 
 // NewEventRepository инициализует слой по работе с бд.
 func NewEventRepository(
-	pool *pgxpool.Pool,
 	logger *logrus.Logger,
-) *repo.EventRepository {
-	return &repo.EventRepository{
-		Pool:   pool,
+) repo.EventRepo {
+	return repo.EventRepo{
 		Logger: logger,
 	}
 }

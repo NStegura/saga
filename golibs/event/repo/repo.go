@@ -3,8 +3,8 @@ package repo
 import (
 	"context"
 	"encoding/json"
-	"events/repo/models"
 	"fmt"
+	"github.com/NStegura/saga/golibs/event/repo/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
@@ -20,18 +20,18 @@ type EventRepository struct {
 func (e *EventRepository) CreateEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	eventType string,
+	topic string,
 	payload json.RawMessage,
 ) (err error) {
 	var id int64
 	const query = `
-		INSERT INTO "event" (event_type, payload) 
+		INSERT INTO "event" (topic, payload) 
 		VALUES ($1, $2) 
 		RETURNING id;
 	`
 
 	err = tx.QueryRow(ctx, query,
-		eventType,
+		topic,
 		payload,
 	).Scan(&id)
 
@@ -50,7 +50,7 @@ func (e *EventRepository) GetNotProcessedEvents(
 	var rows pgx.Rows
 
 	const query = `
-		SELECT id, payload, topic, status
+		SELECT id, payload, topic, status, created_at
 		FROM "event"
 		WHERE (status = 'WAIT' OR reserved_to < NOW())
 		ORDER BY created_at ASC 
@@ -60,7 +60,7 @@ func (e *EventRepository) GetNotProcessedEvents(
 
 	rows, err = tx.Query(ctx, query, limit)
 	if err != nil {
-		return messages, fmt.Errorf("get events failed, %w", err)
+		return messages, fmt.Errorf("failed to get events: %w", err)
 	}
 
 	for rows.Next() {
@@ -68,16 +68,18 @@ func (e *EventRepository) GetNotProcessedEvents(
 		err = rows.Scan(
 			&o.ID,
 			&o.Payload,
+			&o.Topic,
 			&o.Status,
+			&o.CreatedAt,
 		)
 		if err != nil {
-			return messages, fmt.Errorf("get events failed, %w", err)
+			return messages, fmt.Errorf("failed to get events: %w", err)
 		}
 		messages = append(messages, o)
 	}
 
 	if err = rows.Err(); err != nil {
-		return messages, fmt.Errorf("get events failed, %w", err)
+		return messages, fmt.Errorf("failed to get events: %w", err)
 	}
 
 	return messages, nil

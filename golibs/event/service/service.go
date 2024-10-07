@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"events/service/models"
 	"fmt"
+	"github.com/NStegura/saga/golibs/event/service/models"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -17,7 +17,7 @@ func New(repo Repository, logger *logrus.Logger) *Event {
 	return &Event{Repo: repo, Logger: logger}
 }
 
-func (e *Event) ReserveEvents(ctx context.Context, reserveTo time.Time) (events []models.Event, err error) {
+func (e *Event) ReserveEvents(ctx context.Context, eventsLimit int64, reserveTo time.Time) (events []models.Event, err error) {
 	tx, err := e.Repo.OpenTransaction(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open transaction, %w", err)
@@ -26,7 +26,7 @@ func (e *Event) ReserveEvents(ctx context.Context, reserveTo time.Time) (events 
 		_ = e.Repo.Commit(ctx, tx)
 	}()
 
-	eventsToPush, err := e.Repo.GetNotProcessedEvents(ctx, tx, 5)
+	eventsToPush, err := e.Repo.GetNotProcessedEvents(ctx, tx, eventsLimit)
 	if err != nil {
 		_ = e.Repo.Rollback(ctx, tx)
 		return nil, fmt.Errorf("failed to get events from db: %w", err)

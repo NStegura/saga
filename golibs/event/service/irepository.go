@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	"events/repo/models"
+	"github.com/NStegura/saga/golibs/event/repo/models"
+
 	"github.com/jackc/pgx/v5"
 	"time"
 )

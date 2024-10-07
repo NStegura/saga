@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	dbModels "github.com/NStegura/saga/payments/internal/repo/models"
+	dbModels "github.com/NStegura/saga/payments/internal/repo/payment/models"
 	"github.com/NStegura/saga/payments/internal/services/payment/models"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"

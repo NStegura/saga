@@ -1,16 +1,25 @@
-package repo
+package payment
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"github.com/NStegura/saga/payments/internal/custom_errors"
-	"github.com/NStegura/saga/payments/internal/repo/models"
+	"github.com/NStegura/saga/payments/internal/repo/payment/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
-func (db *DB) CreatePayment(ctx context.Context, tx pgx.Tx, orderID int64) (id int64, err error) {
+type PaymentRepo struct {
+	logger *logrus.Logger
+}
+
+func New(logger *logrus.Logger) *PaymentRepo {
+	return &PaymentRepo{logger: logger}
+}
+
+func (db *PaymentRepo) CreatePayment(ctx context.Context, tx pgx.Tx, orderID int64) (id int64, err error) {
 	const query = `
 		INSERT INTO "payment" (order_id, status) 
 		VALUES ($1, $2) 
@@ -29,7 +38,7 @@ func (db *DB) CreatePayment(ctx context.Context, tx pgx.Tx, orderID int64) (id i
 	return
 }
 
-func (db *DB) UpdatePaymentStatusByOrderID(
+func (db *PaymentRepo) UpdatePaymentStatusByOrderID(
 	ctx context.Context,
 	tx pgx.Tx,
 	orderID int64,
@@ -55,7 +64,7 @@ func (db *DB) UpdatePaymentStatusByOrderID(
 	return
 }
 
-func (db *DB) GetPaymentByOrderID(
+func (db *PaymentRepo) GetPaymentByOrderID(
 	ctx context.Context,
 	tx pgx.Tx,
 	orderID int64,

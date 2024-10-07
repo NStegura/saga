@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
@@ -38,14 +37,16 @@ func main() {
 	g, ctx := errgroup.WithContext(ctx)
 
 	log := logrus.New()
-	pool, err := pgxpool.New(ctx, dbDSN)
+
+	// необходимо реализовать бд
+	db, err := New(ctx, dbDSN, event.NewEventRepository(log), log)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer func() {
 		log.Info("close pool")
-		pool.Close()
+		db.Shutdown(ctx)
 		log.Info("pool closed")
 	}()
 
@@ -70,13 +71,12 @@ func main() {
 	CREATE INDEX IF NOT EXISTS idx_created_at ON "event"(created_at);
 	COMMIT;
 `
-	_, err = pool.Exec(ctx, query)
+	_, err = db.pool.Exec(ctx, query)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	repo := event.NewEventRepository(pool, log)
-	service := event.NewEventService(repo, log)
+	service := event.NewEventService(db, log)
 	worker := event.NewPushEventsWorker(
 		&SenderStdOut{log: log},
 		service,
@@ -118,7 +118,7 @@ func main() {
 				i++
 				log.Infof("[saveToDBEventsTimer|%v] events save", i)
 
-				tx, err := repo.OpenTransaction(ctx)
+				tx, err := db.OpenTransaction(ctx)
 				if err != nil {
 					return fmt.Errorf("failed to open transaction: %w", err)
 				}
@@ -127,11 +127,11 @@ func main() {
 				if err != nil {
 					return fmt.Errorf("failed to marshal message: %w", err)
 				}
-				if err := repo.CreateEvent(ctx, tx, "topic_name", payload); err != nil {
+				if err := db.CreateEvent(ctx, tx, "topic_name", payload); err != nil {
 					log.Error(err)
 					continue
 				}
-				_ = repo.Commit(ctx, tx)
+				_ = db.Commit(ctx, tx)
 			case <-ctx.Done():
 				return
 			}

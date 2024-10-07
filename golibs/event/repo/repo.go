@@ -6,18 +6,15 @@ import (
 	"fmt"
 	"github.com/NStegura/saga/golibs/event/repo/models"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 	"time"
 )
 
-type EventRepository struct {
-	Pool *pgxpool.Pool
-
+type EventRepo struct {
 	Logger *logrus.Logger
 }
 
-func (e *EventRepository) CreateEvent(
+func (e *EventRepo) CreateEvent(
 	ctx context.Context,
 	tx pgx.Tx,
 	topic string,
@@ -42,7 +39,7 @@ func (e *EventRepository) CreateEvent(
 	return
 }
 
-func (e *EventRepository) GetNotProcessedEvents(
+func (e *EventRepo) GetNotProcessedEvents(
 	ctx context.Context,
 	tx pgx.Tx,
 	limit int64,
@@ -85,7 +82,7 @@ func (e *EventRepository) GetNotProcessedEvents(
 	return messages, nil
 }
 
-func (e *EventRepository) UpdateReservedTimeEvents(
+func (e *EventRepo) UpdateReservedTimeEvents(
 	ctx context.Context,
 	tx pgx.Tx,
 	eventsIDs []int64,
@@ -103,7 +100,7 @@ func (e *EventRepository) UpdateReservedTimeEvents(
 	return nil
 }
 
-func (e *EventRepository) UpdateEventStatusToDone(
+func (e *EventRepo) UpdateEventStatusToDone(
 	ctx context.Context,
 	tx pgx.Tx,
 	eventID int64,

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: example
+    image: postgres:14.1-alpine
+    ports:
+      - "54321:5432"
+    environment:
+      POSTGRES_USER: 'usr'
+      POSTGRES_PASSWORD: 'psswrd'
+      POSTGRES_DB: 'example'

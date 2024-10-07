@@ -2,8 +2,8 @@ package sender
 
 import (
 	"context"
-	"events/service/models"
 	"fmt"
+	"github.com/NStegura/saga/golibs/event/service/models"
 	"github.com/sirupsen/logrus"
 	"sync"
 	"time"
@@ -37,7 +37,7 @@ func (j *PushEventsWorker) Run(ctx context.Context) error {
 	}
 	go func() {
 		wg.Wait()
-		close(eventsToPushCh)
+		close(pushedEventsCh)
 	}()
 
 	for eventID := range pushedEventsCh {
@@ -52,7 +52,7 @@ func (j *PushEventsWorker) Run(ctx context.Context) error {
 }
 
 func (j *PushEventsWorker) reserveAndGetEventsToPush(ctx context.Context) (chan models.Event, error) {
-	eventsToPush, err := j.Event.ReserveEvents(ctx, time.Now().Add(j.Reserve))
+	eventsToPush, err := j.Event.ReserveEvents(ctx, int64(j.EventsLimit), time.Now().Add(j.Reserve))
 	if err != nil {
 		return nil, fmt.Errorf("failed to reserve events: %w", err)
 	}
@@ -76,7 +76,7 @@ func (j *PushEventsWorker) pushEvents(
 		defer wg.Done()
 
 		for event := range eventsToPushCh {
-			err := j.Producer.PushMsg(event.Payload)
+			err := j.Producer.PushMsg(event.Payload, event.Topic)
 			if err != nil {
 				j.Logger.Error(err)
 			} else {

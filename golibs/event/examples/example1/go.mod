@@ -2,7 +2,10 @@ module github.com/NStegura/saga/golibs/event/examples/example1
 
 go 1.22.0
 
+replace github.com/NStegura/saga/golibs/event => ../../
+
 require (
+	github.com/NStegura/saga/golibs/event v0.0.0-00010101000000-000000000000
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/sirupsen/logrus v1.9.3
 )

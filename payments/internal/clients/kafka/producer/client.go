@@ -7,28 +7,26 @@ import (
 )
 
 type Producer struct {
-	topic    string
 	producer sarama.SyncProducer
 	logger   *logrus.Logger
 }
 
-func New(brokers []string, topic string, logger *logrus.Logger) (*Producer, error) {
+func New(brokers []string, logger *logrus.Logger) (*Producer, error) {
 	cfg := sarama.NewConfig()
 	cfg.Producer.Return.Successes = true
 	syncProducer, err := sarama.NewSyncProducer(brokers, cfg)
 	if err != nil {
-		logger.Fatalf("sync kafka: %v", err)
+		return nil, fmt.Errorf("failed to sync producer: %w", err)
 	}
 	return &Producer{
-		topic:    topic,
 		producer: syncProducer,
 		logger:   logger,
 	}, nil
 }
 
-func (p *Producer) PushMsg(msg []byte) error {
+func (p *Producer) PushMsg(msg []byte, topic string) error {
 	par, off, err := p.producer.SendMessage(&sarama.ProducerMessage{
-		Topic: p.topic, //payment
+		Topic: topic,
 		Key:   sarama.StringEncoder("sync"),
 		Value: sarama.ByteEncoder(msg),
 	})
@@ -39,11 +37,11 @@ func (p *Producer) PushMsg(msg []byte) error {
 	return nil
 }
 
-func (p *Producer) PushMsgs(msgs [][]byte) error {
+func (p *Producer) PushMsgs(msgs [][]byte, topic string) error {
 	pms := make([]*sarama.ProducerMessage, len(msgs))
 	for _, msg := range msgs {
 		pms = append(pms, &sarama.ProducerMessage{
-			Topic: p.topic, //payment
+			Topic: topic,
 			Key:   sarama.StringEncoder("sync"),
 			Value: sarama.ByteEncoder(msg),
 		})

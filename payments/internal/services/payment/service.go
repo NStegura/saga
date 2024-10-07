@@ -15,9 +15,8 @@ const (
 )
 
 type Payment struct {
-	repo      Repository
-	eventRepo EventRepository
-	logger    *logrus.Logger
+	repo   Repository
+	logger *logrus.Logger
 }
 
 func New(repo Repository, logger *logrus.Logger) *Payment {
@@ -50,7 +49,7 @@ func (p *Payment) CreatePayment(ctx context.Context, orderID int64) (id int64, e
 		return id, fmt.Errorf("failed to marshal payment message: %w", err)
 	}
 
-	err = p.eventRepo.CreateEvent(ctx, tx, topic, payload)
+	err = p.repo.CreateEvent(ctx, tx, topic, payload)
 	if err != nil {
 		_ = p.repo.Rollback(ctx, tx)
 		return id, fmt.Errorf("failed to create event: %w", err)
@@ -101,7 +100,7 @@ func (p *Payment) UpdatePaymentStatus(ctx context.Context, orderID int64, status
 		_ = p.repo.Rollback(ctx, tx)
 		return fmt.Errorf("failed to marshal payment message: %w", err)
 	}
-	err = p.eventRepo.CreateEvent(ctx, tx, topic, payload)
+	err = p.repo.CreateEvent(ctx, tx, topic, payload)
 	if err != nil {
 		_ = p.repo.Rollback(ctx, tx)
 		return fmt.Errorf("failed to create event: %w", err)

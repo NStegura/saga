@@ -4,7 +4,8 @@ go 1.22.0
 
 require (
 	github.com/IBM/sarama v1.43.3
-	github.com/NStegura/saga/golibs/event v0.0.0-20241007151738-cfc84ff22a84
+	github.com/NStegura/saga/golibs/event v0.0.0-20241007163258-8768f13b23bd
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.1
@@ -17,7 +18,9 @@ require (
 )
 
 require (
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
 	github.com/eapache/queue v1.1.0 // indirect

@@ -1,11 +1,10 @@
 version: '3'
 
 services:
-
   payments-api:
     build:
       context: .
-      dockerfile: payments.dockerfile
+      dockerfile: api.dockerfile
     restart: on-failure
     working_dir: "$PWD"
     ports:
@@ -27,6 +26,49 @@ services:
     networks:
       - app-network
 
+  payments-cons:
+    build:
+      context: .
+      dockerfile: cons.dockerfile
+    restart: on-failure
+    working_dir: "$PWD"
+    volumes:
+      - "$PWD:$PWD"
+    depends_on:
+      - zookeeper
+      - kafka
+      - payments-postgres
+    links:
+      - zookeeper
+      - kafka
+      - payments-postgres
+    environment:
+      DATABASE_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
+      BROKER_CONN: 'kafka:9092'
+    networks:
+      - app-network
+
+  payments-worker:
+    build:
+      context: .
+      dockerfile: worker.dockerfile
+    restart: on-failure
+    working_dir: "$PWD"
+    volumes:
+      - "$PWD:$PWD"
+    depends_on:
+      - zookeeper
+      - kafka
+      - payments-postgres
+    links:
+      - zookeeper
+      - kafka
+      - payments-postgres
+    environment:
+      DATABASE_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
+      BROKER_CONN: 'kafka:9092'
+    networks:
+      - app-network
 
   payments-postgres:
     container_name: payments-postgres
@@ -75,6 +117,16 @@ services:
       ALLOW_PLAINTEXT_LISTENER: 'yes'
     depends_on:
       - zookeeper
+    networks:
+      - app-network
+
+  redis:
+    container_name: 'redis'
+    image: 'bitnami/redis:latest'
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
     networks:
       - app-network
 

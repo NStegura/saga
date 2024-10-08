@@ -11,11 +11,7 @@ import (
 )
 
 type EventRepo struct {
-	logger *logrus.Logger
-}
-
-func New(logger *logrus.Logger) EventRepo {
-	return EventRepo{logger: logger}
+	Logger *logrus.Logger
 }
 
 func (e *EventRepo) CreateEvent(

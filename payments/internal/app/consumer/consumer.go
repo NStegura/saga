@@ -42,6 +42,7 @@ func (c *InventoryConsumer) Start(ctx context.Context) error {
 		if err := c.consumerCli.Consume(ctx, c.topics, &IncomeHandler{
 			payment: c.payment,
 			cache:   c.cache,
+			logger:  c.logger,
 		}); err != nil {
 			c.logger.Errorf("income consumer error: %v", err)
 			return fmt.Errorf("income consumer error: %w", err)

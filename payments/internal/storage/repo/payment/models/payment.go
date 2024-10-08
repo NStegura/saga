@@ -14,11 +14,11 @@ const (
 	COMPLETED
 )
 
-func (ps *PaymentStatus) String() string {
-	return [...]string{"CREATED", "FAILED", "COMPLETED"}[*ps-1]
+func (ps PaymentStatus) String() string {
+	return [...]string{"CREATED", "FAILED", "COMPLETED"}[ps-1]
 }
 
-func (ps *PaymentStatus) Value() (driver.Value, error) {
+func (ps PaymentStatus) Value() (driver.Value, error) {
 	return ps.String(), nil
 }
 

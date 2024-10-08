@@ -15,6 +15,22 @@ bash:
 down:
 	docker-compose down --remove-orphans --rmi local
 
+.PHONY: buildall
+buildall: buildapi buildcons
+
+.PHONY: buildapi
+buildapi: ## Build api app
+	go build -o ./cmd/server/server cmd/server/main.go
+
+.PHONY: buildcons
+buildcons: ## Build cons app
+	go build -o ./cmd/consumer/cons cmd/consumer/main.go
+
+.PHONY: runapi
+runapi: ## Run api app
+	go run cmd/server/main.go
+
+
 .PHONY: protoc
 protoc:
 	protoc --proto_path=./api --go_out=pkg/api --go_opt=paths=source_relative --go-grpc_out=pkg/api --go-grpc_opt=paths=source_relative api/paymentsapi.proto

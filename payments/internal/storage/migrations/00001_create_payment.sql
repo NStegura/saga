@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS payment
     created_at  timestamp NOT NULL DEFAULT NOW(),
     updated_at  timestamp NOT NULL DEFAULT NOW()
 );
-CREATE INDEX idx_created_at ON "payment"(created_at);
+CREATE INDEX IF NOT EXISTS idx_payment_created_at ON "payment"(created_at);
 COMMIT;
 -- +goose StatementEnd
 

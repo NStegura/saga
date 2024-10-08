@@ -7,7 +7,6 @@ services:
       dockerfile: api.dockerfile
     restart: on-failure
     working_dir: "$PWD"
-    platform: linux/amd64
     ports:
       - '8081:8081'
     volumes:
@@ -27,8 +26,8 @@ services:
       CRON_FREQUENCY: '5s'
       CRON_RATE_LIMIT: '2'
       CRON_EVENTS_LIMIT: '20'
-      CRON_RESERVE: '20'
-      CRON_PRODUCER_BROKERS: 'kafka:9092,'
+      CRON_RESERVE: '20s'
+      CRON_PRODUCER_BROKERS: 'kafka:9092'
       LOG_LEVEL: 'DEBUG'
     networks:
       - app-network
@@ -39,7 +38,6 @@ services:
       dockerfile: cons.dockerfile
     restart: on-failure
     working_dir: "$PWD"
-    platform: linux/amd64
     volumes:
       - "$PWD:$PWD"
     depends_on:
@@ -54,8 +52,8 @@ services:
       - payments-postgres
     environment:
       DB_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
-      CONSUMER_TOPICS: 'inventory,'
-      CONSUMER_BROKERS: 'kafka:9092,'
+      CONSUMER_TOPICS: 'inventory'
+      CONSUMER_BROKERS: 'kafka:9092'
       REDIS_DSN: 'redis:6379'
       LOG_LEVEL: 'DEBUG'
     networks:

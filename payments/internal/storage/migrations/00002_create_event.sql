@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS event
     created_at  timestamp NOT NULL DEFAULT NOW(),
     reserved_to timestamp DEFAULT NULL
 );
-CREATE INDEX idx_created_at ON "event"(created_at);
+CREATE INDEX IF NOT EXISTS idx_event_created_at ON "event"(created_at);
 COMMIT;
 
 -- +goose StatementEnd

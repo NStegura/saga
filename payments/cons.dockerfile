@@ -2,11 +2,13 @@
 FROM golang:1.22.0-alpine as builder
 WORKDIR /build
 COPY go.mod go.sum ./
+#ENV GOOS=linux GOARCH=amd64
 RUN go mod download
 COPY . .
-RUN go build -o /main cmd/server/main.go
+RUN go build -o /main cmd/consumer/main.go
 
 # Финальный этап, копируем собранное приложение
 FROM alpine:3
-COPY --from=builder main /bin/main
+COPY --from=builder /main /bin/main
+#RUN chmod +x /bin/main
 ENTRYPOINT ["/bin/main"]

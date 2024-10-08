@@ -16,7 +16,7 @@ type Config struct {
 
 type Cron struct {
 	Producer    Producer      `envconfig:"PRODUCER"`
-	Frequency   time.Duration `envconfig:"FREQUENCY" default:"10s"`
+	Frequency   time.Duration `envconfig:"FREQUENCY" default:"5s"`
 	RateLimit   int           `envconfig:"RATE_LIMIT" default:"2"`
 	EventsLimit int           `envconfig:"EVENTS_LIMIT" default:"20"`
 	Reserve     time.Duration `envconfig:"RESERVE" default:"20"`

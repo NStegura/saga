@@ -21,6 +21,7 @@ func New(
 	ctx context.Context,
 	dsn string,
 	logger *logrus.Logger,
+	runMigrations bool,
 ) (*DB, error) {
 	cfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
@@ -37,6 +38,9 @@ func New(
 		EventRepo:   eventRepo.EventRepo{Logger: logger},
 		pool:        pool,
 		logger:      logger,
+	}
+	if !runMigrations {
+		return &db, nil
 	}
 
 	if err = db.runMigrations(); err != nil {

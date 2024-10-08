@@ -34,7 +34,7 @@ func runServer() error {
 		return fmt.Errorf("failed to init logger: %w", err)
 	}
 
-	repo, err := storage.New(ctx, cfg.DB.DSN, logg)
+	repo, err := storage.New(ctx, cfg.DB.DSN, logg, true)
 	if err != nil {
 		return fmt.Errorf("failed to init storage: %w", err)
 	}

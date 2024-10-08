@@ -7,6 +7,7 @@ services:
       dockerfile: api.dockerfile
     restart: on-failure
     working_dir: "$PWD"
+    platform: linux/amd64
     ports:
       - '8081:8081'
     volumes:
@@ -20,9 +21,15 @@ services:
       - kafka
       - payments-postgres
     environment:
-      DATABASE_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
-      SERVER_CONN:  '0.0.0.0:8081'
-      BROKER_CONN: 'kafka:9092'
+      DB_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
+      SERVER_GRPC_ADDR: '0.0.0.0:8081'
+      SERVER_SHUTDOWN_TIMEOUT: '5s'
+      CRON_FREQUENCY: '5s'
+      CRON_RATE_LIMIT: '2'
+      CRON_EVENTS_LIMIT: '20'
+      CRON_RESERVE: '20'
+      CRON_PRODUCER_BROKERS: 'kafka:9092,'
+      LOG_LEVEL: 'DEBUG'
     networks:
       - app-network
 
@@ -32,19 +39,25 @@ services:
       dockerfile: cons.dockerfile
     restart: on-failure
     working_dir: "$PWD"
+    platform: linux/amd64
     volumes:
       - "$PWD:$PWD"
     depends_on:
+      - payments-api
       - zookeeper
       - kafka
       - payments-postgres
     links:
+      - payments-api
       - zookeeper
       - kafka
       - payments-postgres
     environment:
-      DATABASE_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
-      BROKER_CONN: 'kafka:9092'
+      DB_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
+      CONSUMER_TOPICS: 'inventory,'
+      CONSUMER_BROKERS: 'kafka:9092,'
+      REDIS_DSN: 'redis:6379'
+      LOG_LEVEL: 'DEBUG'
     networks:
       - app-network
 

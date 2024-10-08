@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	Consumer        Consumer      `envconfig:"CRON"`
+	Consumer        Consumer      `envconfig:"CONSUMER"`
 	DB              DB            `envconfig:"DB"`
 	Redis           Redis         `envconfig:"REDIS"`
 	LogLevel        string        `envconfig:"LOG_LEVEL" default:"DEBUG"`

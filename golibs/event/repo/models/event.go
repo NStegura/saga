@@ -14,11 +14,11 @@ const (
 	DONE
 )
 
-func (os *EventStatus) String() string {
-	return [...]string{"WAIT", "DONE"}[*os-1]
+func (os EventStatus) String() string {
+	return [...]string{"WAIT", "DONE"}[os-1]
 }
 
-func (os *EventStatus) Value() (driver.Value, error) {
+func (os EventStatus) Value() (driver.Value, error) {
 	return os.String(), nil
 }
 

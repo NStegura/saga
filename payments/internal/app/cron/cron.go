@@ -38,3 +38,11 @@ func (c *Cron) Start(ctx context.Context) error {
 		}
 	}
 }
+
+func (c *Cron) Shutdown(_ context.Context) error {
+	return nil
+}
+
+func (c *Cron) Name() string {
+	return "cron tab"
+}

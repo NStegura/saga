@@ -7,12 +7,11 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/NStegura/saga/payments/internal/app/consumer/models"
 	"github.com/NStegura/saga/payments/internal/clients/redis"
-	"github.com/NStegura/saga/payments/internal/services/payment"
 	"github.com/sirupsen/logrus"
 )
 
 type IncomeHandler struct {
-	payment payment.Payment
+	payment Payments
 	cache   Cache
 
 	logger *logrus.Logger

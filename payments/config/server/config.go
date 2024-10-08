@@ -4,19 +4,35 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"gopkg.in/yaml.v3"
 	"os"
+	"time"
 )
 
 type Config struct {
-	Server Server `envconfig:"SERVER"`
-	DB     DB     `envconfig:"DB"`
+	Server   Server `envconfig:"SERVER"`
+	Cron     Cron   `envconfig:"CRON"`
+	DB       DB     `envconfig:"DB"`
+	LogLevel string `envconfig:"LOG_LEVEL" default:"DEBUG"`
+}
+
+type Cron struct {
+	Producer    Producer      `envconfig:"PRODUCER"`
+	Frequency   time.Duration `envconfig:"FREQUENCY" default:"10s"`
+	RateLimit   int           `envconfig:"RATE_LIMIT" default:"2"`
+	EventsLimit int           `envconfig:"EVENTS_LIMIT" default:"20"`
+	Reserve     time.Duration `envconfig:"RESERVE" default:"20"`
+}
+
+type Producer struct {
+	Brokers []string `envconfig:"BROKERS" required:"true"`
 }
 
 type Server struct {
-	GRPCAddr string `envconfig:"GRPC_ADDR" default:"localhost:8081"`
+	GRPCAddr        string        `envconfig:"GRPC_ADDR" required:"true"`
+	ShutdownTimeout time.Duration `envconfig:"SHUTDOWN_TIMEOUT" default:"5s"`
 }
 
 type DB struct {
-	DSN string `envconfig:"DSN" default:"postgres://usr:psswrd@localhost:54321/payments?sslmode=disable"`
+	DSN string `envconfig:"DSN"  required:"true"`
 }
 
 func New() (cfg Config, err error) {

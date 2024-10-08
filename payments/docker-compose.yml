@@ -48,28 +48,6 @@ services:
     networks:
       - app-network
 
-  payments-worker:
-    build:
-      context: .
-      dockerfile: worker.dockerfile
-    restart: on-failure
-    working_dir: "$PWD"
-    volumes:
-      - "$PWD:$PWD"
-    depends_on:
-      - zookeeper
-      - kafka
-      - payments-postgres
-    links:
-      - zookeeper
-      - kafka
-      - payments-postgres
-    environment:
-      DATABASE_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
-      BROKER_CONN: 'kafka:9092'
-    networks:
-      - app-network
-
   payments-postgres:
     container_name: payments-postgres
     image: postgres:14.1-alpine

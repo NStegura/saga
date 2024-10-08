@@ -1,10 +1,11 @@
-package grpcserver
+package server
 
 import (
 	"context"
 	"fmt"
 	"github.com/NStegura/saga/payments/internal/services/payment/models"
 	"github.com/golang/protobuf/ptypes/empty"
+	"log"
 	"net"
 
 	config "github.com/NStegura/saga/payments/config/server"
@@ -19,23 +20,29 @@ import (
 type GRPCServer struct {
 	pb.UnimplementedPaymentsApiServer
 
-	cfg      *config.Server
+	server   *grpc.Server
+	cfg      config.Server
 	payments Payments
 	system   System
 
 	logger *logrus.Logger
 }
 
-func New(cfg *config.Server, p Payments, s System, logger *logrus.Logger) (*GRPCServer, error) {
-	return &GRPCServer{
+func New(cfg config.Server, p Payments, s System, logger *logrus.Logger, opts ...grpc.ServerOption) (*GRPCServer, error) {
+	grpcServer := grpc.NewServer(opts...)
+
+	server := &GRPCServer{
+		server:   grpcServer,
 		cfg:      cfg,
 		payments: p,
 		system:   s,
 		logger:   logger,
-	}, nil
+	}
+	pb.RegisterPaymentsApiServer(grpcServer, server)
+	return server, nil
 }
 
-func (s *GRPCServer) Start(opts ...grpc.ServerOption) error {
+func (s *GRPCServer) Start(_ context.Context) error {
 	s.logger.Infof("starting GRPCServer %s", s.cfg.GRPCAddr)
 	lis, err := net.Listen("tcp", s.cfg.GRPCAddr)
 	defer func() {
@@ -46,12 +53,34 @@ func (s *GRPCServer) Start(opts ...grpc.ServerOption) error {
 	if err != nil {
 		return fmt.Errorf("failed to create network listener: %w", err)
 	}
-	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterPaymentsApiServer(grpcServer, s)
-	if err = grpcServer.Serve(lis); err != nil {
+
+	if err = s.server.Serve(lis); err != nil {
 		return fmt.Errorf("failed to start grpc server: %w", err)
 	}
 	return nil
+}
+
+func (s *GRPCServer) Shutdown(ctx context.Context) (err error) {
+	doneCh := make(chan struct{})
+
+	go func() {
+		s.server.GracefulStop()
+		close(doneCh)
+	}()
+
+	select {
+	case <-ctx.Done():
+		log.Println("Shutdown timeout reached, force closing.")
+		s.server.Stop()
+		err = ctx.Err()
+	case <-doneCh:
+		log.Println("Shutdown success")
+	}
+	return nil
+}
+
+func (s *GRPCServer) Name() string {
+	return "grpc server"
 }
 
 func (s *GRPCServer) UpdatePaymentStatus(ctx context.Context, req *pb.PayStatus) (*empty.Empty, error) {

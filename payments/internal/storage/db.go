@@ -1,17 +1,17 @@
-package repo
+package storage
 
 import (
 	"context"
 	"fmt"
-	"github.com/NStegura/saga/golibs/event/repo"
-	"github.com/NStegura/saga/payments/internal/repo/payment"
+	eventRepo "github.com/NStegura/saga/golibs/event/repo"
+	paymentRepo "github.com/NStegura/saga/payments/internal/storage/repo/payment"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
 type DB struct {
-	payment.PaymentRepo
-	repo.EventRepo
+	paymentRepo.PaymentRepo
+	eventRepo.EventRepo
 	pool *pgxpool.Pool
 
 	logger *logrus.Logger
@@ -20,8 +20,6 @@ type DB struct {
 func New(
 	ctx context.Context,
 	dsn string,
-	paymentRepo payment.PaymentRepo,
-	eventRepo repo.EventRepo,
 	logger *logrus.Logger,
 ) (*DB, error) {
 	cfg, err := pgxpool.ParseConfig(dsn)
@@ -35,8 +33,8 @@ func New(
 	}
 
 	db := DB{
-		PaymentRepo: paymentRepo,
-		EventRepo:   eventRepo,
+		PaymentRepo: paymentRepo.New(logger),
+		EventRepo:   eventRepo.EventRepo{Logger: logger},
 		pool:        pool,
 		logger:      logger,
 	}

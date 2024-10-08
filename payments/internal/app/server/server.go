@@ -86,7 +86,7 @@ func (s *GRPCServer) Name() string {
 func (s *GRPCServer) UpdatePaymentStatus(ctx context.Context, req *pb.PayStatus) (*empty.Empty, error) {
 	var paymentStatus models.PaymentMessageStatus
 	if req.Status {
-		paymentStatus = models.CREATED
+		paymentStatus = models.COMPLETED
 	} else if !req.Status {
 		paymentStatus = models.FAILED
 	}

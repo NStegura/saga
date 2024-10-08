@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"github.com/NStegura/saga/golibs/event"
 	eventRepo "github.com/NStegura/saga/golibs/event/repo"
 	paymentRepo "github.com/NStegura/saga/payments/internal/storage/repo/payment"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -35,7 +36,7 @@ func New(
 
 	db := DB{
 		PaymentRepo: paymentRepo.New(logger),
-		EventRepo:   eventRepo.EventRepo{Logger: logger},
+		EventRepo:   event.NewEventRepository(logger),
 		pool:        pool,
 		logger:      logger,
 	}

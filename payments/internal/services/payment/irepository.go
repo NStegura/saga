@@ -25,11 +25,10 @@ type Repository interface {
 		orderID int64,
 		status dbModels.PaymentStatus,
 	) error
-	GetPaymentByOrderID(
+	GetCreatedPaymentByOrderIDForUpdate(
 		ctx context.Context,
 		tx pgx.Tx,
 		orderID int64,
-		forUpdate bool,
 	) (payment dbModels.Payment, err error)
 
 	OpenTransaction(ctx context.Context) (tx pgx.Tx, err error)

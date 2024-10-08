@@ -68,7 +68,7 @@ func (p *Payment) UpdatePaymentStatus(ctx context.Context, orderID int64, status
 		_ = p.repo.Commit(ctx, tx)
 	}()
 
-	_, err = p.repo.GetPaymentByOrderID(ctx, tx, orderID, true)
+	_, err = p.repo.GetCreatedPaymentByOrderIDForUpdate(ctx, tx, orderID)
 	if err != nil {
 		_ = p.repo.Rollback(ctx, tx)
 		return fmt.Errorf("failed to get payment by order id for update: %w", err)

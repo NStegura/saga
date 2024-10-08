@@ -44,7 +44,7 @@ func (db *PaymentRepo) UpdatePaymentStatusByOrderID(
 	orderID int64,
 	status models.PaymentStatus,
 ) (err error) {
-	var id int64
+	var ID int64
 	const query = `
 		UPDATE "payment"
 		SET	status = $1, updated_at = $2
@@ -55,37 +55,27 @@ func (db *PaymentRepo) UpdatePaymentStatusByOrderID(
 	err = tx.QueryRow(ctx, query,
 		status,
 		time.Now(),
-	).Scan(&orderID)
+		orderID,
+	).Scan(&ID)
 
 	if err != nil {
 		return fmt.Errorf("UpdatePaymentStatus failed, %w", err)
 	}
-	db.logger.Debugf("Update payment status %v, id, %v", status, id)
+	db.logger.Debugf("Update payment status %v, id, %v", status, ID)
 	return
 }
 
-func (db *PaymentRepo) GetPaymentByOrderID(
+func (db *PaymentRepo) GetCreatedPaymentByOrderIDForUpdate(
 	ctx context.Context,
 	tx pgx.Tx,
 	orderID int64,
-	forUpdate bool,
 ) (payment models.Payment, err error) {
-	var query string
-	if forUpdate {
-		query = `
+	const query = `
 		SELECT p.id, p.order_id, p.status, p.created_at, p.updated_at
 		FROM "payment" p
-		WHERE id = $1
+		WHERE order_id = $1 and status = 'CREATED'
 		FOR UPDATE;
 	`
-	} else {
-		query = `
-		SELECT p.id, p.order_id, p.status, p.created_at, p.updated_at
-		FROM "payment" p
-		WHERE id = $1;
-	`
-	}
-
 	err = tx.QueryRow(ctx, query, orderID).Scan(
 		&payment.ID,
 		&payment.OrderID,

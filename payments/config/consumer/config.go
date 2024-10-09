@@ -1,10 +1,11 @@
 package consumer
 
 import (
-	"github.com/kelseyhightower/envconfig"
-	"gopkg.in/yaml.v3"
 	"os"
 	"time"
+
+	"github.com/kelseyhightower/envconfig"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {

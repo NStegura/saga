@@ -3,6 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+
 	config "github.com/NStegura/saga/payments/config/consumer"
 	inventoryCons "github.com/NStegura/saga/payments/internal/app/consumer"
 	"github.com/NStegura/saga/payments/internal/clients/kafka/consumer"
@@ -11,9 +15,6 @@ import (
 	"github.com/NStegura/saga/payments/internal/storage"
 	"github.com/NStegura/saga/payments/monitoring/logger"
 	"golang.org/x/sync/errgroup"
-	"log"
-	"os"
-	"os/signal"
 )
 
 const (

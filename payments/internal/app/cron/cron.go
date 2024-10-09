@@ -2,9 +2,10 @@ package cron
 
 import (
 	"context"
+	"time"
+
 	"github.com/NStegura/saga/payments/internal/app/cron/workers"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 type Cron struct {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+
 	"github.com/IBM/sarama"
 	"github.com/NStegura/saga/payments/internal/app/consumer/models"
 	"github.com/NStegura/saga/payments/internal/clients/redis"

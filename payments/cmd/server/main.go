@@ -3,6 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"sync"
+
 	"github.com/NStegura/saga/golibs/event"
 	config "github.com/NStegura/saga/payments/config/server"
 	"github.com/NStegura/saga/payments/internal/app"
@@ -14,10 +19,6 @@ import (
 	"github.com/NStegura/saga/payments/internal/storage"
 	"github.com/NStegura/saga/payments/monitoring/logger"
 	"golang.org/x/sync/errgroup"
-	"log"
-	"os"
-	"os/signal"
-	"sync"
 )
 
 func runServer() error {

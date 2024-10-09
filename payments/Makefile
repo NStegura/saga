@@ -20,11 +20,11 @@ buildall: buildapi buildcons
 
 .PHONY: buildapi
 buildapi: ## Build api app
-	go build -o ./cmd/server/server cmd/server/main.go
+	go build -o ./bin/server cmd/server/main.go
 
 .PHONY: buildcons
 buildcons: ## Build cons app
-	go build -o ./cmd/consumer/cons cmd/consumer/main.go
+	go build -o ./bin/cons cmd/consumer/main.go
 
 .PHONY: runapi
 runapi: ## Run api app

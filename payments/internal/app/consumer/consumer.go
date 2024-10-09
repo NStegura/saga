@@ -3,6 +3,7 @@ package consumer
 import (
 	"context"
 	"fmt"
+
 	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
 )

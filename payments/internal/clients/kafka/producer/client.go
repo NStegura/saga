@@ -2,6 +2,7 @@ package producer
 
 import (
 	"fmt"
+
 	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
 )

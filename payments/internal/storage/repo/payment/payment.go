@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/NStegura/saga/payments/internal/custom_errors"
+	"time"
+
+	"github.com/NStegura/saga/payments/internal/errs"
 	"github.com/NStegura/saga/payments/internal/storage/repo/payment/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 type PaymentRepo struct {
@@ -85,7 +86,7 @@ func (db *PaymentRepo) GetCreatedPaymentByOrderIDForUpdate(
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			err = custom_errors.ErrNotFound
+			err = errs.ErrNotFound
 			return
 		}
 		return payment, fmt.Errorf("get order failed, %w", err)

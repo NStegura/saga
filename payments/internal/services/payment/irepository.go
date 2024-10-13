@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	dbModels "github.com/NStegura/saga/payments/internal/storage/repo/payment/models"
 	"github.com/jackc/pgx/v5"
+
+	dbModels "github.com/NStegura/saga/payments/internal/storage/repo/payment/models"
 )
 
 type EventRepository interface {

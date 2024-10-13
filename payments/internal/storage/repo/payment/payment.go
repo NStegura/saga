@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/NStegura/saga/payments/internal/errs"
-	"github.com/NStegura/saga/payments/internal/storage/repo/payment/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/sirupsen/logrus"
+
+	"github.com/NStegura/saga/payments/internal/errs"
+	"github.com/NStegura/saga/payments/internal/storage/repo/payment/models"
 )
 
 type PaymentRepo struct {

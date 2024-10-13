@@ -85,4 +85,4 @@ kafkacat -C -b localhost:9095 -t payment
 kafkacat -C -b localhost:9095 -t inventory
 
 2. консоль redis  
-telnet localhost 6379
+redis-cli

@@ -40,9 +40,9 @@ protoc:
 .PHONY: fmt
 fmt:
 	go fmt ./...
-	goimports -w -local github.com/NStegura/metrics ./cmd
-	goimports -w -local github.com/NStegura/metrics ./internal
-	goimports -w -local github.com/NStegura/metrics ./config
+	goimports -w -local github.com/NStegura/saga/payments ./cmd
+	goimports -w -local github.com/NStegura/saga/payments ./internal
+	goimports -w -local github.com/NStegura/saga/payments ./config
 
 .PHONY: lint
 lint:

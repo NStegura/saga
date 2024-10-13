@@ -6,9 +6,10 @@ import (
 
 	"github.com/NStegura/saga/golibs/event"
 	eventRepo "github.com/NStegura/saga/golibs/event/repo"
-	paymentRepo "github.com/NStegura/saga/payments/internal/storage/repo/payment"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
+
+	paymentRepo "github.com/NStegura/saga/payments/internal/storage/repo/payment"
 )
 
 type DB struct {

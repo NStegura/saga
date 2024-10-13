@@ -8,7 +8,11 @@ import (
 	"os/signal"
 	"sync"
 
+	"github.com/NStegura/saga/payments/internal/monitoring/logger"
+
 	"github.com/NStegura/saga/golibs/event"
+	"golang.org/x/sync/errgroup"
+
 	config "github.com/NStegura/saga/payments/config/server"
 	"github.com/NStegura/saga/payments/internal/app"
 	"github.com/NStegura/saga/payments/internal/app/cron"
@@ -17,8 +21,6 @@ import (
 	"github.com/NStegura/saga/payments/internal/services/payment"
 	"github.com/NStegura/saga/payments/internal/services/system"
 	"github.com/NStegura/saga/payments/internal/storage"
-	"github.com/NStegura/saga/payments/monitoring/logger"
-	"golang.org/x/sync/errgroup"
 )
 
 func runServer() error {

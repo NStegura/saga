@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/NStegura/saga/payments/internal/app/cron/workers"
 	"github.com/sirupsen/logrus"
+
+	"github.com/NStegura/saga/payments/internal/app/cron/workers"
 )
 
 type Cron struct {

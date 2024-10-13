@@ -1,0 +1,148 @@
+version: '3'
+
+services:
+  products-api:
+    build:
+      context: .
+      dockerfile: api.dockerfile
+    restart: on-failure
+    working_dir: "$PWD"
+    ports:
+      - '8081:8081'
+    volumes:
+      - "$PWD:$PWD"
+    depends_on:
+      - zookeeper
+      - kafka
+      - products-postgres
+    links:
+      - zookeeper
+      - kafka
+      - products-postgres
+    environment:
+      DB_DSN: 'postgres://usr:psswrd@products-postgres:5432/products?sslmode=disable'
+      SERVER_GRPC_ADDR: '0.0.0.0:8081'
+      SERVER_SHUTDOWN_TIMEOUT: '5s'
+      CRON_FREQUENCY: '5s'
+      CRON_RATE_LIMIT: '2'
+      CRON_EVENTS_LIMIT: '20'
+      CRON_RESERVE: '20s'
+      CRON_PRODUCER_BROKERS: 'kafka:9092'
+      LOG_LEVEL: 'DEBUG'
+    networks:
+      - app-network
+
+  products-ordercons:
+    build:
+      context: .
+      dockerfile: ordercons.dockerfile
+    restart: on-failure
+    working_dir: "$PWD"
+    volumes:
+      - "$PWD:$PWD"
+    depends_on:
+      - zookeeper
+      - kafka
+      - products-postgres
+    links:
+      - zookeeper
+      - kafka
+      - products-postgres
+    environment:
+      DB_DSN: 'postgres://usr:psswrd@products-postgres:5432/products?sslmode=disable'
+      CONSUMER_TOPICS: 'order'
+      CONSUMER_BROKERS: 'kafka:9092'
+      REDIS_DSN: 'redis:6379'
+      LOG_LEVEL: 'DEBUG'
+    networks:
+      - app-network
+
+  products-paymentcons:
+    build:
+      context: .
+      dockerfile: paymentcons.dockerfile
+    restart: on-failure
+    working_dir: "$PWD"
+    volumes:
+      - "$PWD:$PWD"
+    depends_on:
+      - zookeeper
+      - kafka
+      - products-postgres
+    links:
+      - zookeeper
+      - kafka
+      - products-postgres
+    environment:
+      DB_DSN: 'postgres://usr:psswrd@products-postgres:5432/products?sslmode=disable'
+      CONSUMER_TOPICS: 'payment'
+      CONSUMER_BROKERS: 'kafka:9092'
+      REDIS_DSN: 'redis:6379'
+      LOG_LEVEL: 'DEBUG'
+    networks:
+      - app-network
+
+  products-postgres:
+    container_name: products-postgres
+    image: postgres:14.1-alpine
+    ports:
+      - "54321:5432"
+    environment:
+      POSTGRES_USER: 'usr'
+      POSTGRES_PASSWORD: 'psswrd'
+      POSTGRES_DB: 'products'
+    networks:
+      - app-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: 'local'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka:9092'
+      KAFKA_CLUSTERS_0_ZOOKEEPER: 'zookeeper:2181'
+    networks:
+      - app-network
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ALLOW_ANONYMOUS_LOGIN: yes
+    networks:
+      - app-network
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - "9095:9094"
+    environment:
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
+      KAFKA_BROKER_ID: '1'
+      KAFKA_CFG_LISTENERS: 'INTERNAL://kafka:9092,OUTSIDE://kafka:9094'
+      KAFKA_CFG_ADVERTISED_LISTENERS: 'INTERNAL://kafka:9092,OUTSIDE://localhost:9095'
+      KAFKA_CFG_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: 'INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT'
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+    depends_on:
+      - zookeeper
+    networks:
+      - app-network
+
+  redis:
+    container_name: 'redis'
+    image: 'bitnami/redis:latest'
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

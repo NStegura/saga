@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/NStegura/saga/payments/internal/services/payment/models"
-	dbModels "github.com/NStegura/saga/payments/internal/storage/repo/payment/models"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+
+	"github.com/NStegura/saga/payments/internal/services/payment/models"
+	dbModels "github.com/NStegura/saga/payments/internal/storage/repo/payment/models"
 )
 
 const (

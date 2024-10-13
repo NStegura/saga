@@ -6,8 +6,9 @@ import (
 	"log"
 	"net"
 
-	"github.com/NStegura/saga/payments/internal/services/payment/models"
 	"github.com/golang/protobuf/ptypes/empty"
+
+	"github.com/NStegura/saga/payments/internal/services/payment/models"
 
 	config "github.com/NStegura/saga/payments/config/server"
 	pb "github.com/NStegura/saga/payments/pkg/api"

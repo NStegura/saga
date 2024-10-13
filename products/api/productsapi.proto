@@ -1,0 +1,28 @@
+syntax = "proto3";
+package productsapi;
+option go_package = "github.com/NStegura/saga/products/api";
+
+import "google/protobuf/empty.proto";
+
+
+
+service ProductsApi {
+  rpc GetProducts(google.protobuf.Empty) returns (Products) {}
+  rpc GetPing(google.protobuf.Empty) returns (Pong) {}
+}
+
+message Products {
+  repeated Product products = 1;
+}
+
+message Product {
+  int64 product_id = 1;
+  string category = 2;
+  string name = 3;
+  string description = 4;
+  int64 count = 5;
+}
+
+message Pong {
+  bool pong = 1;
+}

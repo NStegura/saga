@@ -7,14 +7,16 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/NStegura/saga/payments/internal/monitoring/logger"
+
+	"golang.org/x/sync/errgroup"
+
 	config "github.com/NStegura/saga/payments/config/consumer"
 	inventoryCons "github.com/NStegura/saga/payments/internal/app/consumer"
 	"github.com/NStegura/saga/payments/internal/clients/kafka/consumer"
 	"github.com/NStegura/saga/payments/internal/clients/redis"
 	"github.com/NStegura/saga/payments/internal/services/payment"
 	"github.com/NStegura/saga/payments/internal/storage"
-	"github.com/NStegura/saga/payments/monitoring/logger"
-	"golang.org/x/sync/errgroup"
 )
 
 const (

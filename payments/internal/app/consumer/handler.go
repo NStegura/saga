@@ -6,9 +6,10 @@ import (
 	"errors"
 
 	"github.com/IBM/sarama"
+	"github.com/sirupsen/logrus"
+
 	"github.com/NStegura/saga/payments/internal/app/consumer/models"
 	"github.com/NStegura/saga/payments/internal/clients/redis"
-	"github.com/sirupsen/logrus"
 )
 
 type IncomeHandler struct {

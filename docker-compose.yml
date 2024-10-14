@@ -24,7 +24,7 @@ services:
       DB_DSN: 'postgres://usr:psswrd@orders-postgres:5432/orders?sslmode=disable'
       SERVER_GRPC_ADDR: '0.0.0.0:8081'
       SERVER_SHUTDOWN_TIMEOUT: '5s'
-      CRON_FREQUENCY: '5s'
+      CRON_FREQUENCY: '1s'
       CRON_RATE_LIMIT: '2'
       CRON_EVENTS_LIMIT: '20'
       CRON_RESERVE: '20s'
@@ -51,7 +51,7 @@ services:
       - orders-postgres
     environment:
       DB_DSN: 'postgres://usr:psswrd@orders-postgres:5432/orders?sslmode=disable'
-      CONSUMER_TOPICS: 'reserve'
+      CONSUMER_TOPICS: 'inventory'
       CONSUMER_BROKERS: 'kafka:9092'
       REDIS_DSN: 'redis:6379'
       LOG_LEVEL: 'DEBUG'
@@ -118,7 +118,7 @@ services:
       DB_DSN: 'postgres://usr:psswrd@products-postgres:5432/products?sslmode=disable'
       SERVER_GRPC_ADDR: '0.0.0.0:8082'
       SERVER_SHUTDOWN_TIMEOUT: '5s'
-      CRON_FREQUENCY: '5s'
+      CRON_FREQUENCY: '1s'
       CRON_RATE_LIMIT: '2'
       CRON_EVENTS_LIMIT: '20'
       CRON_RESERVE: '20s'
@@ -148,7 +148,7 @@ services:
       CONSUMER_TOPICS: 'order'
       CONSUMER_BROKERS: 'kafka:9092'
       REDIS_DSN: 'redis:6379'
-      ORDER_CLI_CONN: 'localhost:8081'
+      ORDER_CLI_CONN: 'orders-api:8081'
       LOG_LEVEL: 'DEBUG'
     networks:
       - app-network
@@ -213,7 +213,7 @@ services:
       DB_DSN: 'postgres://usr:psswrd@payments-postgres:5432/payments?sslmode=disable'
       SERVER_GRPC_ADDR: '0.0.0.0:8083'
       SERVER_SHUTDOWN_TIMEOUT: '5s'
-      CRON_FREQUENCY: '5s'
+      CRON_FREQUENCY: '1s'
       CRON_RATE_LIMIT: '2'
       CRON_EVENTS_LIMIT: '20'
       CRON_RESERVE: '20s'

@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	groupID                      = "product"
+	groupID                      = "orders"
 	inventoryConsumerServiceName = "product consumer"
 )
 

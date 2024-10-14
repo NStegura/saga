@@ -5,8 +5,8 @@ import "github.com/google/uuid"
 type InventoryMessageStatus string
 
 const (
-	FAILED    InventoryMessageStatus = "FAILED"
-	COMPLETED InventoryMessageStatus = "COMPLETED"
+	FAILED  InventoryMessageStatus = "FAILED"
+	CREATED InventoryMessageStatus = "CREATED"
 )
 
 type InventoryMessage struct {

@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	groupID                      = "orders"
+	groupID                      = "products"
 	inventoryConsumerServiceName = "order consumer"
 )
 

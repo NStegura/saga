@@ -12,6 +12,7 @@ type Config struct {
 	Consumer        Consumer      `envconfig:"CONSUMER"`
 	DB              DB            `envconfig:"DB"`
 	Redis           Redis         `envconfig:"REDIS"`
+	OrderCli        OrderCli      `envconfig:"ORDER_CLI"`
 	LogLevel        string        `envconfig:"LOG_LEVEL" default:"DEBUG"`
 	ShutdownTimeout time.Duration `envconfig:"SHUTDOWN_TIMEOUT" default:"5s"`
 }
@@ -27,6 +28,10 @@ type DB struct {
 
 type Redis struct {
 	DSN string `envconfig:"DSN" required:"true"`
+}
+
+type OrderCli struct {
+	CONN string `envconfig:"CONN" required:"true"`
 }
 
 func New() (cfg Config, err error) {

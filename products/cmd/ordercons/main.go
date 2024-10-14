@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/NStegura/saga/products/internal/app/consumers"
 	handler "github.com/NStegura/saga/products/internal/app/consumers/handlers/order"
+	"github.com/NStegura/saga/products/internal/clients/orders"
 	"github.com/NStegura/saga/products/internal/services/product"
 	"log"
 	"os"
@@ -50,12 +51,16 @@ func runConsumer() error {
 	productService := product.New(repo, logg)
 
 	cache := redis.New(cfg.Redis.DSN)
-
+	// для локального запуска необходимо подменить клиент
+	orderCli, err := orders.New(cfg.OrderCli.CONN)
+	if err != nil {
+		return fmt.Errorf("failed to init cli: %w", err)
+	}
 	cons := consumers.New(
 		inventoryConsumerServiceName,
 		cfg.Consumer.Topics,
 		consGroup,
-		handler.New(productService, cache, logg),
+		handler.New(productService, cache, orderCli, logg),
 		logg,
 	)
 

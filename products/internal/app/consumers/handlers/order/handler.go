@@ -7,22 +7,24 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/NStegura/saga/products/internal/app/consumers/handlers/order/models"
 	"github.com/NStegura/saga/products/internal/clients/redis"
-	models2 "github.com/NStegura/saga/products/internal/services/product/models"
+	productModels "github.com/NStegura/saga/products/internal/services/product/models"
 	"github.com/sirupsen/logrus"
 )
 
 type IncomeHandler struct {
-	product Product
-	cache   Cache
+	product  Product
+	cache    Cache
+	orderCli OrderCli
 
 	logger *logrus.Logger
 }
 
-func New(product Product, cache Cache, logger *logrus.Logger) *IncomeHandler {
+func New(product Product, cache Cache, orderCli OrderCli, logger *logrus.Logger) *IncomeHandler {
 	return &IncomeHandler{
-		product: product,
-		cache:   cache,
-		logger:  logger,
+		product:  product,
+		cache:    cache,
+		orderCli: orderCli,
+		logger:   logger,
 	}
 }
 
@@ -57,19 +59,19 @@ func (i *IncomeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 			i.logger.Infof("unexpected err: %v", err)
 			continue
 		}
-
-		//добавить grpc клиента
-		//ordersCli.GetOrder(orderID)
-
-		productsInOrder := []models2.Reserve{
-			{1, 5},
-			{2, 1},
-			{3, 3},
-			{4, 5},
-			{5, 2},
+		productsToReserve, err := i.orderCli.GetProductsToReserve(message.OrderID)
+		if err != nil {
+			i.logger.Info("failed to reserve products: %w", err)
+			continue
 		}
-
-		err = i.product.ReserveProducts(ctx, message.OrderID, productsInOrder)
+		or := make([]productModels.Reserve, 0, len(productsToReserve))
+		for _, product := range productsToReserve {
+			or = append(or, productModels.Reserve{
+				ProductID: product.ProductID,
+				Count:     product.Count,
+			})
+		}
+		err = i.product.ReserveProducts(ctx, message.OrderID, or)
 		if err != nil {
 			i.logger.Info("failed to reserve products: %w", err)
 			continue

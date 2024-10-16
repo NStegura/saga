@@ -89,6 +89,37 @@ func (r *ProductRepo) GetProductForUpdate(
 	return
 }
 
+func (r *ProductRepo) GetProduct(
+	ctx context.Context,
+	productID int64,
+) (product models.Product, err error) {
+	const query = `
+		SELECT id,
+		       category,
+		       name,
+		       description,
+		       count
+		FROM product
+		WHERE id = $1;
+	`
+	err = r.pool.QueryRow(ctx, query, productID).Scan(
+		&product.ID,
+		&product.Category,
+		&product.Name,
+		&product.Description,
+		&product.Count,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = errs.ErrNotFound
+			return
+		}
+		return product, fmt.Errorf("get product for update failed, %w", err)
+	}
+
+	return
+}
+
 func (r *ProductRepo) UpdateProductCount(ctx context.Context, tx pgx.Tx, productID, count int64) (err error) {
 
 	const query = `

@@ -20,8 +20,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductsApi_GetProducts_FullMethodName = "/productsapi.ProductsApi/GetProducts"
-	ProductsApi_GetPing_FullMethodName     = "/productsapi.ProductsApi/GetPing"
+	ProductsApi_GetProducts_FullMethodName    = "/productsapi.ProductsApi/GetProducts"
+	ProductsApi_GetProductInfo_FullMethodName = "/productsapi.ProductsApi/GetProductInfo"
+	ProductsApi_GetPing_FullMethodName        = "/productsapi.ProductsApi/GetPing"
 )
 
 // ProductsApiClient is the client API for ProductsApi service.
@@ -29,6 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductsApiClient interface {
 	GetProducts(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Products, error)
+	GetProductInfo(ctx context.Context, in *ProductId, opts ...grpc.CallOption) (*Product, error)
 	GetPing(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Pong, error)
 }
 
@@ -50,6 +52,16 @@ func (c *productsApiClient) GetProducts(ctx context.Context, in *empty.Empty, op
 	return out, nil
 }
 
+func (c *productsApiClient) GetProductInfo(ctx context.Context, in *ProductId, opts ...grpc.CallOption) (*Product, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Product)
+	err := c.cc.Invoke(ctx, ProductsApi_GetProductInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *productsApiClient) GetPing(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Pong, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Pong)
@@ -65,6 +77,7 @@ func (c *productsApiClient) GetPing(ctx context.Context, in *empty.Empty, opts .
 // for forward compatibility.
 type ProductsApiServer interface {
 	GetProducts(context.Context, *empty.Empty) (*Products, error)
+	GetProductInfo(context.Context, *ProductId) (*Product, error)
 	GetPing(context.Context, *empty.Empty) (*Pong, error)
 	mustEmbedUnimplementedProductsApiServer()
 }
@@ -78,6 +91,9 @@ type UnimplementedProductsApiServer struct{}
 
 func (UnimplementedProductsApiServer) GetProducts(context.Context, *empty.Empty) (*Products, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
+}
+func (UnimplementedProductsApiServer) GetProductInfo(context.Context, *ProductId) (*Product, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProductInfo not implemented")
 }
 func (UnimplementedProductsApiServer) GetPing(context.Context, *empty.Empty) (*Pong, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPing not implemented")
@@ -121,6 +137,24 @@ func _ProductsApi_GetProducts_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductsApi_GetProductInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProductId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductsApiServer).GetProductInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductsApi_GetProductInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductsApiServer).GetProductInfo(ctx, req.(*ProductId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProductsApi_GetPing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
@@ -149,6 +183,10 @@ var ProductsApi_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProducts",
 			Handler:    _ProductsApi_GetProducts_Handler,
+		},
+		{
+			MethodName: "GetProductInfo",
+			Handler:    _ProductsApi_GetProductInfo_Handler,
 		},
 		{
 			MethodName: "GetPing",

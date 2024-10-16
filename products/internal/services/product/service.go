@@ -23,8 +23,11 @@ func New(repo Repository, logger *logrus.Logger) *Product {
 	return &Product{repo: repo, logger: logger}
 }
 
-func (p *Product) GetProducts(ctx context.Context) ([]models.Product, error) {
+func (p *Product) GetProducts(ctx context.Context) (ps []models.Product, err error) {
 	products, err := p.repo.GetProducts(ctx)
+	if err != nil {
+		return ps, fmt.Errorf("failed to get products: %w", err)
+	}
 	outProducts := make([]models.Product, 0, len(products))
 	for _, product := range products {
 		outProducts = append(
@@ -37,7 +40,21 @@ func (p *Product) GetProducts(ctx context.Context) ([]models.Product, error) {
 			},
 		)
 	}
-	return outProducts, err
+	return outProducts, nil
+}
+
+func (p *Product) GetProductInfo(ctx context.Context, productID int64) (pr models.Product, err error) {
+	product, err := p.repo.GetProduct(ctx, productID)
+	if err != nil {
+		return pr, fmt.Errorf("failed to get product: %w", err)
+	}
+	return models.Product{
+		ProductID:   product.ID,
+		Category:    product.Category,
+		Name:        product.Name,
+		Description: product.Description,
+		Count:       product.Count,
+	}, nil
 }
 
 func (p *Product) ReserveProducts(

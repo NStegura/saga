@@ -9,4 +9,5 @@ import (
 // Product интерфейс для работы с бизнес слоем.
 type Product interface {
 	GetProducts(context.Context) ([]models.Product, error)
+	GetProductInfo(ctx context.Context, productID int64) (models.Product, error)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
 
@@ -136,6 +137,24 @@ func (s *GRPCServer) GetOrder(ctx context.Context, req *pb.OrderId) (*pb.OrderOu
 		Description:   order.Description,
 		State:         string(order.State),
 	}, err
+}
+
+func (s *GRPCServer) GetOrderStates(ctx context.Context, req *pb.OrderId) (*pb.States, error) {
+	orderStates, err := s.order.GetOrderStates(ctx, req.OrderId)
+	if err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	orderStatesOut := make([]*pb.OrderState, 0, len(orderStates))
+	for _, oState := range orderStates {
+		orderStatesOut = append(orderStatesOut, &pb.OrderState{
+			State: string(oState.State),
+			Time:  timestamppb.New(oState.CreatedAt),
+		})
+	}
+	return &pb.States{OrderStates: orderStatesOut}, nil
 }
 
 func (s *GRPCServer) GetOrders(ctx context.Context, req *pb.UserId) (*pb.Orders, error) {

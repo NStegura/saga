@@ -34,7 +34,6 @@ func (c *Client) GetProductsToReserve(OrderID int64) (ps []Product, err error) {
 	ctx := metadata.AppendToOutgoingContext(context.Background(),
 		"sender", "productService",
 		"when", time.Now().Format(time.RFC3339),
-		"sender", "route256",
 	)
 	order, err := c.client.GetOrder(ctx, &orderapi.OrderId{OrderId: OrderID})
 	if err != nil {
@@ -48,4 +47,8 @@ func (c *Client) GetProductsToReserve(OrderID int64) (ps []Product, err error) {
 	}
 
 	return ps, nil
+}
+
+func (c *Client) Close() {
+	_ = c.conn.Close()
 }

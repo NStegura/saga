@@ -28,8 +28,11 @@ func New(product Product, cache Cache, orderCli OrderCli, logger *logrus.Logger)
 	}
 }
 
-func (i *IncomeHandler) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
-func (i *IncomeHandler) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
+func (i *IncomeHandler) Setup(_ sarama.ConsumerGroupSession) error { return nil }
+func (i *IncomeHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
+	i.orderCli.Close()
+	return nil
+}
 
 func (i *IncomeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {

@@ -56,6 +56,7 @@ func runConsumer() error {
 	if err != nil {
 		return fmt.Errorf("failed to init cli: %w", err)
 	}
+	defer orderCli.Close()
 	cons := consumers.New(
 		inventoryConsumerServiceName,
 		cfg.Consumer.Topics,

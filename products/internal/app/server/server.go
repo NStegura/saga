@@ -109,6 +109,24 @@ func (s *GRPCServer) GetProducts(ctx context.Context, _ *empty.Empty) (*pb.Produ
 	return &pb.Products{Products: outProducts}, nil
 }
 
+func (s *GRPCServer) GetProductInfo(ctx context.Context, req *pb.ProductId) (*pb.Product, error) {
+	pInfo, err := s.products.GetProductInfo(ctx, req.ProductId)
+	if err != nil {
+		if errors.Is(err, errs.ErrNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.Product{
+		ProductId:   pInfo.ProductID,
+		Category:    pInfo.Category,
+		Name:        pInfo.Name,
+		Description: pInfo.Description,
+		Count:       pInfo.Count,
+	}, nil
+}
+
 func (s *GRPCServer) GetPing(ctx context.Context, _ *empty.Empty) (*pb.Pong, error) {
 	if err := s.system.Ping(ctx); err != nil {
 		return nil, err

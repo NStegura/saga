@@ -22,6 +22,7 @@ type Repository interface {
 	EventRepository
 	GetProducts(context.Context) ([]productRepo.Product, error)
 	GetProductForUpdate(ctx context.Context, tx pgx.Tx, productID int64) (product productRepo.Product, err error)
+	GetProduct(ctx context.Context, productID int64) (product productRepo.Product, err error)
 	UpdateProductCount(ctx context.Context, tx pgx.Tx, productID, count int64) (err error)
 
 	CreateReserve(

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
@@ -155,4 +154,20 @@ func (p *Order) CreateOrderState(ctx context.Context, orderID int64, state model
 		return fmt.Errorf("failed to update pay status: %w", err)
 	}
 	return nil
+}
+
+func (p *Order) GetOrderStates(ctx context.Context, orderID int64) (states []models.State, err error) {
+	orderStates, err := p.repo.GetStatesByOrderID(ctx, orderID)
+	if err != nil {
+		return states, fmt.Errorf("failed to get order states: %w", err)
+	}
+
+	os := make([]models.State, 0, len(orderStates))
+	for _, orderState := range orderStates {
+		os = append(os, models.State{
+			State:     models.OrderState(orderState.State.String()),
+			CreatedAt: orderState.CreatedAt,
+		})
+	}
+	return os, nil
 }

@@ -8,12 +8,18 @@ import "google/protobuf/empty.proto";
 
 service ProductsApi {
   rpc GetProducts(google.protobuf.Empty) returns (Products) {}
+  rpc GetProductInfo(ProductId) returns (Product) {}
   rpc GetPing(google.protobuf.Empty) returns (Pong) {}
 }
 
 message Products {
   repeated Product products = 1;
 }
+
+message ProductId {
+  int64 product_id = 1;
+}
+
 
 message Product {
   int64 product_id = 1;

@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"time"
 )
 
 type OrderMessageStatus string
@@ -38,4 +39,9 @@ type OrderInfo struct {
 type OrderProduct struct {
 	ProductID int64
 	Count     int64
+}
+
+type State struct {
+	State     OrderState
+	CreatedAt time.Time
 }

@@ -1,14 +1,16 @@
 syntax = "proto3";
-package productsapi;
+package ordersapi;
 option go_package = "github.com/NStegura/saga/orders/api";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 
 service OrdersApi {
 
   rpc CreateOrder(OrderIn) returns (OrderId) {}
   rpc GetOrder(OrderId) returns (OrderOut) {}
+  rpc GetOrderStates(OrderId) returns (States) {}
   rpc GetOrders(UserId) returns (Orders) {}
   rpc GetPing(google.protobuf.Empty) returns (Pong) {}
 }
@@ -33,6 +35,15 @@ message OrderOut {
 
 message Orders {
   repeated OrderInfoOut orders = 1;
+}
+
+message States {
+  repeated OrderState order_states = 1;
+}
+
+message OrderState {
+  string state = 1;
+  google.protobuf.Timestamp time = 2;
 }
 
 message OrderInfoOut {

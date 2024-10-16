@@ -10,6 +10,7 @@ import (
 type Order interface {
 	GetOrders(ctx context.Context, userID int64) ([]models.OrderInfo, error)
 	GetOrder(ctx context.Context, orderID int64) (o models.Order, err error)
+	GetOrderStates(ctx context.Context, orderID int64) (states []models.State, err error)
 	CreateOrder(
 		ctx context.Context,
 		userID int64,

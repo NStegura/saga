@@ -32,8 +32,7 @@ func (c *Cache) Get(ctx context.Context, userID int64) (userState domain.UserSta
 	val, err := c.client.Get(ctx, c.keyFormat(userID)).Result()
 	if err != nil {
 		if err == redis.Nil {
-			userState.UserID = userID
-			return userState, nil
+			return domain.NewUserState(userID), nil
 		}
 		return userState, fmt.Errorf("failed to get user state: %w", err)
 	}

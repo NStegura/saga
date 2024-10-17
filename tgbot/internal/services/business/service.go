@@ -45,6 +45,20 @@ func (b *Business) GetProducts(ctx context.Context) ([]domain.Product, error) {
 	return ps, nil
 }
 
+func (b *Business) GetProduct(ctx context.Context, articleID int64) (domain.Product, error) {
+	product, err := b.productsCli.GetProduct(ctx, articleID)
+	if err != nil {
+		return domain.Product{}, fmt.Errorf("failed to get products: %w", err)
+	}
+	return domain.Product{
+		ArticleID:   product.ArticleID,
+		Category:    product.Category,
+		Name:        product.Name,
+		Description: product.Description,
+		Count:       product.Count,
+	}, nil
+}
+
 func (b *Business) CreateOrder(ctx context.Context, orderInfo domain.CreateOrderInfo) (int64, error) {
 	oips := make([]orders.Product, 0, len(orderInfo.Products))
 	for _, p := range orderInfo.Products {
@@ -101,7 +115,7 @@ func (b *Business) GetOrder(ctx context.Context, orderID int64) (domain.Order, e
 		return domain.Order{}, fmt.Errorf("failed to get order statuses: %w", err)
 	}
 	orderStatuses := make([]domain.StatusInfo, 0, len(statuses))
-	for _, status := range orderStatuses {
+	for _, status := range statuses {
 		orderStatuses = append(orderStatuses, domain.StatusInfo{
 			Status: status.Status,
 			Time:   status.Time,

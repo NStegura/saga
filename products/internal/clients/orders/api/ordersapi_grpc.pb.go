@@ -4,7 +4,7 @@
 // - protoc             v3.6.1
 // source: ordersapi.proto
 
-package orderapi
+package api
 
 import (
 	context "context"
@@ -20,10 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrdersApi_CreateOrder_FullMethodName = "/productsapi.OrdersApi/CreateOrder"
-	OrdersApi_GetOrder_FullMethodName    = "/productsapi.OrdersApi/GetOrder"
-	OrdersApi_GetOrders_FullMethodName   = "/productsapi.OrdersApi/GetOrders"
-	OrdersApi_GetPing_FullMethodName     = "/productsapi.OrdersApi/GetPing"
+	OrdersApi_CreateOrder_FullMethodName    = "/ordersapi.OrdersApi/CreateOrder"
+	OrdersApi_GetOrder_FullMethodName       = "/ordersapi.OrdersApi/GetOrder"
+	OrdersApi_GetOrderStates_FullMethodName = "/ordersapi.OrdersApi/GetOrderStates"
+	OrdersApi_GetOrders_FullMethodName      = "/ordersapi.OrdersApi/GetOrders"
+	OrdersApi_GetPing_FullMethodName        = "/ordersapi.OrdersApi/GetPing"
 )
 
 // OrdersApiClient is the client API for OrdersApi service.
@@ -32,6 +33,7 @@ const (
 type OrdersApiClient interface {
 	CreateOrder(ctx context.Context, in *OrderIn, opts ...grpc.CallOption) (*OrderId, error)
 	GetOrder(ctx context.Context, in *OrderId, opts ...grpc.CallOption) (*OrderOut, error)
+	GetOrderStates(ctx context.Context, in *OrderId, opts ...grpc.CallOption) (*States, error)
 	GetOrders(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*Orders, error)
 	GetPing(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*Pong, error)
 }
@@ -64,6 +66,16 @@ func (c *ordersApiClient) GetOrder(ctx context.Context, in *OrderId, opts ...grp
 	return out, nil
 }
 
+func (c *ordersApiClient) GetOrderStates(ctx context.Context, in *OrderId, opts ...grpc.CallOption) (*States, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(States)
+	err := c.cc.Invoke(ctx, OrdersApi_GetOrderStates_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *ordersApiClient) GetOrders(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*Orders, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Orders)
@@ -90,6 +102,7 @@ func (c *ordersApiClient) GetPing(ctx context.Context, in *empty.Empty, opts ...
 type OrdersApiServer interface {
 	CreateOrder(context.Context, *OrderIn) (*OrderId, error)
 	GetOrder(context.Context, *OrderId) (*OrderOut, error)
+	GetOrderStates(context.Context, *OrderId) (*States, error)
 	GetOrders(context.Context, *UserId) (*Orders, error)
 	GetPing(context.Context, *empty.Empty) (*Pong, error)
 	mustEmbedUnimplementedOrdersApiServer()
@@ -107,6 +120,9 @@ func (UnimplementedOrdersApiServer) CreateOrder(context.Context, *OrderIn) (*Ord
 }
 func (UnimplementedOrdersApiServer) GetOrder(context.Context, *OrderId) (*OrderOut, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
+}
+func (UnimplementedOrdersApiServer) GetOrderStates(context.Context, *OrderId) (*States, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrderStates not implemented")
 }
 func (UnimplementedOrdersApiServer) GetOrders(context.Context, *UserId) (*Orders, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
@@ -171,6 +187,24 @@ func _OrdersApi_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrdersApi_GetOrderStates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrdersApiServer).GetOrderStates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrdersApi_GetOrderStates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrdersApiServer).GetOrderStates(ctx, req.(*OrderId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _OrdersApi_GetOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserId)
 	if err := dec(in); err != nil {
@@ -211,7 +245,7 @@ func _OrdersApi_GetPing_Handler(srv interface{}, ctx context.Context, dec func(i
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OrdersApi_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "productsapi.OrdersApi",
+	ServiceName: "ordersapi.OrdersApi",
 	HandlerType: (*OrdersApiServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -221,6 +255,10 @@ var OrdersApi_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrder",
 			Handler:    _OrdersApi_GetOrder_Handler,
+		},
+		{
+			MethodName: "GetOrderStates",
+			Handler:    _OrdersApi_GetOrderStates_Handler,
 		},
 		{
 			MethodName: "GetOrders",

@@ -47,11 +47,17 @@ func (b *TgBot) configRoutes(ctx context.Context) {
 	b.bot.Handle("/products", b.handleProducts())
 	b.bot.Handle("/products_next", b.handleProducts())
 	b.bot.Handle("/products_prev", b.handleProducts())
-	b.bot.Handle("/order", b.handleOrder())
-	b.bot.Handle("/add_to_order", b.handleAddToOrder())
-	b.bot.Handle("/orders", b.handleOrders())
+
+	b.bot.Handle("/get_shopping_cart", b.handleGetShoppingCart())
+	b.bot.Handle("/add_to_shopping_cart", b.handleAddToShoppingCart())
+	b.bot.Handle("/clear_shopping_cart", b.handleClearShoppingCart())
+
+	b.bot.Handle("/order_info", b.handleOrderInfo())
+	b.bot.Handle("/orders_history", b.handleOrdersHistory())
 	b.bot.Handle("/create_order", b.handleCreateOrder())
+
 	b.bot.Handle("/pay", b.handlePay())
+
 	b.bot.Handle("/help", b.handleHelp())
 }
 

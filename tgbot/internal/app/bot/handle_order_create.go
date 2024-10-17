@@ -13,12 +13,12 @@ func (b *TgBot) handleCreateOrder() tele.HandlerFunc {
 			return fmt.Errorf("failed to get user state: %w", err)
 		}
 
-		if len(userState.ProductSt.Products) == 0 {
+		if len(userState.ShopCartSt.Products) == 0 {
 			return ctx.Send("Товаров в корзине нет.")
 		}
 
-		ops := make([]domain.OrderProduct, 0, len(userState.ProductSt.Products))
-		for _, orderProduct := range userState.ProductSt.Products {
+		ops := make([]domain.OrderProduct, 0, len(userState.ShopCartSt.Products))
+		for _, orderProduct := range userState.ShopCartSt.Products {
 			ops = append(ops, orderProduct)
 		}
 
@@ -31,7 +31,7 @@ func (b *TgBot) handleCreateOrder() tele.HandlerFunc {
 			return fmt.Errorf("failed to create order: %w", err)
 		}
 
-		userState.ProductSt.Products = map[int64]domain.OrderProduct{}
+		userState.ShopCartSt.Products = map[int64]domain.OrderProduct{}
 		err = b.cache.Set(b.ctx, userState)
 		if err != nil {
 			return fmt.Errorf("failed to set user state: %w", err)

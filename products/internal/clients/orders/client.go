@@ -3,7 +3,7 @@ package orders
 import (
 	"context"
 	"fmt"
-	"github.com/NStegura/saga/products/internal/clients/orders/orderapi"
+	"github.com/NStegura/saga/products/internal/clients/orders/api"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"time"
@@ -14,7 +14,7 @@ import (
 
 type Client struct {
 	conn   *grpc.ClientConn
-	client orderapi.OrdersApiClient
+	client api.OrdersApiClient
 }
 
 func New(addr string) (*Client, error) {
@@ -26,7 +26,7 @@ func New(addr string) (*Client, error) {
 	}
 	return &Client{
 		conn:   conn,
-		client: orderapi.NewOrdersApiClient(conn),
+		client: api.NewOrdersApiClient(conn),
 	}, nil
 }
 
@@ -35,7 +35,7 @@ func (c *Client) GetProductsToReserve(OrderID int64) (ps []Product, err error) {
 		"sender", "productService",
 		"when", time.Now().Format(time.RFC3339),
 	)
-	order, err := c.client.GetOrder(ctx, &orderapi.OrderId{OrderId: OrderID})
+	order, err := c.client.GetOrder(ctx, &api.OrderId{OrderId: OrderID})
 	if err != nil {
 		return ps, fmt.Errorf("failed to get order: %w", err)
 	}

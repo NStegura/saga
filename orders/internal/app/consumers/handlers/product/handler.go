@@ -48,14 +48,17 @@ func (i *IncomeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 		}
 		i.logger.Infof("Product event: %v", message)
 		ctx := context.Background()
-		if message.Status == models.FAILED {
+
+		switch message.Status {
+		case models.FAILED:
 			state = orderModels.RESERVE_FAILED
-		} else if message.Status == models.CREATED {
+		case models.CREATED:
 			state = orderModels.RESERVE_CREATED
-		} else {
+		default:
 			i.logger.Infof("product status: %s, continue", message.Status)
 			continue
 		}
+
 		err = i.cache.Get(ctx, message.IKey)
 		if err == nil {
 			i.logger.Info("idempotent key already exists, continue")

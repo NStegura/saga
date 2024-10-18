@@ -82,7 +82,7 @@ func (s *GRPCServer) Shutdown(ctx context.Context) (err error) {
 	case <-doneCh:
 		log.Println("Shutdown success")
 	}
-	return nil
+	return
 }
 
 func (s *GRPCServer) Name() string {

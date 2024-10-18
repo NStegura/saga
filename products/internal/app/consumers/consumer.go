@@ -10,7 +10,6 @@ import (
 
 type Consumer struct {
 	name        string
-	ctx         context.Context
 	topics      []string
 	consumerCli sarama.ConsumerGroup
 	handler     sarama.ConsumerGroupHandler

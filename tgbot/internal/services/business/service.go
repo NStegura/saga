@@ -103,11 +103,11 @@ func (b *Business) GetOrder(ctx context.Context, orderID int64) (domain.Order, e
 			return domain.Order{}, fmt.Errorf("failed to get product: %w", err)
 		}
 		orderProducts = append(orderProducts, domain.Product{
-			ArticleID:   product.ArticleID,
+			ArticleID:   op.ArticleID,
 			Category:    product.Category,
 			Name:        product.Name,
 			Description: product.Description,
-			Count:       product.Count,
+			Count:       op.Count,
 		})
 	}
 	statuses, err := b.orderCli.GetOrderStatuses(ctx, order.OrderId)

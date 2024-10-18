@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -26,11 +27,9 @@ func (c *IdempotentCache) Get(ctx context.Context, key uuid.UUID) (err error) {
 	_, err = c.client.Get(ctx, key.String()).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
-			err = ErrCacheMiss
-			return
-		} else {
-			return
+			return ErrCacheMiss
 		}
+		return fmt.Errorf("failed to get data from redis: %w", err)
 	}
 	return
 }

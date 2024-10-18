@@ -262,33 +262,33 @@ services:
       - app-network
 
 ############# tgbot #############
-#  tgbot:
-#    build:
-#      context: ./tgbot
-#      dockerfile: tgbot.dockerfile
-#    restart: on-failure
-#    working_dir: "$PWD"
-#    volumes:
-#      - "$PWD:$PWD"
-#    depends_on:
-#      - payments-api
-#      - products-api
-#      - orders-api
-#      - redis
-#    links:
-#      - payments-api
-#      - products-api
-#      - orders-api
-#      - redis
-#    environment:
-#      TG_BOT_TOKEN: '7588716328:AAFpRkPVV_34C0_tahmCrOuQSKSQYudqEG8'
-#      REDIS_DSN: 'redis:6379'
-#      ORDER_CLI_CONN: 'orders-api:8081'
-#      PAYMENT_CLI_CONN: 'payments-api:8083'
-#      PRODUCT_CLI_CONN: 'products-api:8082'
-#      LOG_LEVEL: 'DEBUG'
-#    networks:
-#      - app-network
+  tgbot:
+    build:
+      context: ./tgbot
+      dockerfile: tgbot.dockerfile
+    restart: on-failure
+    working_dir: "$PWD"
+    volumes:
+      - "$PWD:$PWD"
+    depends_on:
+      - payments-api
+      - products-api
+      - orders-api
+      - redis
+    links:
+      - payments-api
+      - products-api
+      - orders-api
+      - redis
+    environment:
+      TG_BOT_TOKEN: 'your token'
+      REDIS_DSN: 'redis:6379'
+      ORDER_CLI_CONN: 'orders-api:8081'
+      PAYMENT_CLI_CONN: 'payments-api:8083'
+      PRODUCT_CLI_CONN: 'products-api:8082'
+      LOG_LEVEL: 'DEBUG'
+    networks:
+      - app-network
 
   ############# infra #############
   kafka-ui:

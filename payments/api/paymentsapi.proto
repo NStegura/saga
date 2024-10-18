@@ -1,0 +1,29 @@
+syntax = "proto3";
+package paymentsapi;
+option go_package = "github.com/NStegura/saga/payments/api";
+
+import "google/protobuf/empty.proto";
+
+
+
+service PaymentsApi {
+  rpc UpdatePaymentStatus(PayStatus) returns (google.protobuf.Empty) {}
+  rpc GetPing(google.protobuf.Empty) returns (Pong) {}
+}
+
+message Id {
+  int64 id = 1;
+}
+
+message OrderId {
+  int64 order_id = 1;
+}
+
+message PayStatus {
+  int64 order_id = 1;
+  bool status = 2;
+}
+
+message Pong {
+  bool pong = 1;
+}

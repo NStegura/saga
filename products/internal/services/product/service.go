@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/NStegura/saga/products/internal/services/product/models"
-	dbModels "github.com/NStegura/saga/products/internal/storage/repo/product/models"
+
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+
+	"github.com/NStegura/saga/products/internal/services/product/models"
+	dbModels "github.com/NStegura/saga/products/internal/storage/repo/product/models"
 )
 
 const (

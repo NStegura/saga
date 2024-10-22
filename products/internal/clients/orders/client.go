@@ -3,8 +3,10 @@ package orders
 import (
 	"context"
 	"fmt"
-	"github.com/NStegura/saga/products/internal/clients/orders/api"
+
 	"google.golang.org/grpc/credentials/insecure"
+
+	"github.com/NStegura/saga/products/internal/clients/orders/api"
 
 	"time"
 

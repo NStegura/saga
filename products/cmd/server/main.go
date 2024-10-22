@@ -9,6 +9,8 @@ import (
 	"sync"
 
 	"github.com/NStegura/saga/golibs/event"
+	"golang.org/x/sync/errgroup"
+
 	config "github.com/NStegura/saga/products/config/server"
 	"github.com/NStegura/saga/products/internal/app"
 	"github.com/NStegura/saga/products/internal/app/cron"
@@ -18,7 +20,6 @@ import (
 	"github.com/NStegura/saga/products/internal/services/system"
 	"github.com/NStegura/saga/products/internal/storage"
 	"github.com/NStegura/saga/products/monitoring/logger"
-	"golang.org/x/sync/errgroup"
 )
 
 func runServer() error {

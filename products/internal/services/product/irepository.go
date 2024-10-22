@@ -3,6 +3,7 @@ package product
 import (
 	"context"
 	"encoding/json"
+
 	productRepo "github.com/NStegura/saga/products/internal/storage/repo/product/models"
 	reserveRepo "github.com/NStegura/saga/products/internal/storage/repo/reserve/models"
 

@@ -3,11 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	handler "github.com/NStegura/saga/products/internal/app/consumers/handlers/payment"
-	"github.com/NStegura/saga/products/internal/services/product"
 	"log"
 	"os"
 	"os/signal"
+
+	handler "github.com/NStegura/saga/products/internal/app/consumers/handlers/payment"
+	"github.com/NStegura/saga/products/internal/services/product"
+
+	"golang.org/x/sync/errgroup"
 
 	config "github.com/NStegura/saga/products/config/paymentcons"
 	"github.com/NStegura/saga/products/internal/app/consumers"
@@ -15,7 +18,6 @@ import (
 	"github.com/NStegura/saga/products/internal/clients/redis"
 	"github.com/NStegura/saga/products/internal/storage"
 	"github.com/NStegura/saga/products/monitoring/logger"
-	"golang.org/x/sync/errgroup"
 )
 
 const (

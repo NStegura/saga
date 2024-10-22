@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/NStegura/saga/products/internal/errs"
+	"log"
+	"net"
+
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
-	"net"
+
+	"github.com/NStegura/saga/products/internal/errs"
 
 	config "github.com/NStegura/saga/products/config/server"
 	pb "github.com/NStegura/saga/products/pkg/api"
@@ -129,7 +131,7 @@ func (s *GRPCServer) GetProductInfo(ctx context.Context, req *pb.ProductId) (*pb
 
 func (s *GRPCServer) GetPing(ctx context.Context, _ *empty.Empty) (*pb.Pong, error) {
 	if err := s.system.Ping(ctx); err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &pb.Pong{
 		Pong: true,

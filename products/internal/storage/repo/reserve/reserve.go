@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/NStegura/saga/products/internal/errs"
-	"github.com/NStegura/saga/products/internal/storage/repo/reserve/models"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
+
+	"github.com/NStegura/saga/products/internal/errs"
+	"github.com/NStegura/saga/products/internal/storage/repo/reserve/models"
 )
 
 type ReserveRepo struct {

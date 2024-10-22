@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+
 	"github.com/IBM/sarama"
+	"github.com/sirupsen/logrus"
+
 	"github.com/NStegura/saga/products/internal/app/consumers/handlers/order/models"
 	"github.com/NStegura/saga/products/internal/clients/redis"
 	productModels "github.com/NStegura/saga/products/internal/services/product/models"
-	"github.com/sirupsen/logrus"
 )
 
 type IncomeHandler struct {

@@ -2,6 +2,7 @@ package payment
 
 import (
 	"context"
+
 	"github.com/NStegura/saga/products/internal/services/product/models"
 )
 

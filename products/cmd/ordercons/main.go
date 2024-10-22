@@ -3,20 +3,22 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+
 	"github.com/NStegura/saga/products/internal/app/consumers"
 	handler "github.com/NStegura/saga/products/internal/app/consumers/handlers/order"
 	"github.com/NStegura/saga/products/internal/clients/orders"
 	"github.com/NStegura/saga/products/internal/services/product"
-	"log"
-	"os"
-	"os/signal"
+
+	"golang.org/x/sync/errgroup"
 
 	config "github.com/NStegura/saga/products/config/ordercons"
 	"github.com/NStegura/saga/products/internal/clients/kafka/consumer"
 	"github.com/NStegura/saga/products/internal/clients/redis"
 	"github.com/NStegura/saga/products/internal/storage"
 	"github.com/NStegura/saga/products/monitoring/logger"
-	"golang.org/x/sync/errgroup"
 )
 
 const (

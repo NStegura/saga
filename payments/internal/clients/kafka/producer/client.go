@@ -34,7 +34,7 @@ func (p *Producer) PushMsg(msg []byte, topic string) error {
 	if err != nil {
 		return fmt.Errorf("failed to push msg %v", msg)
 	}
-	p.logger.Debug("order %v -> %v; %v", par, off, err)
+	p.logger.Debugf("order %v -> %v; %v", par, off, err)
 	return nil
 }
 

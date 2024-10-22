@@ -2,9 +2,11 @@ package bot
 
 import (
 	"fmt"
-	"github.com/NStegura/saga/tgbot/internal/domain"
-	tele "gopkg.in/telebot.v4"
 	"strings"
+
+	tele "gopkg.in/telebot.v4"
+
+	"github.com/NStegura/saga/tgbot/internal/domain"
 )
 
 func (b *TgBot) handleOrdersHistory() tele.HandlerFunc {

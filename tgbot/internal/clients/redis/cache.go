@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/NStegura/saga/tgbot/internal/domain"
 	"time"
+
+	"github.com/NStegura/saga/tgbot/internal/domain"
 
 	"github.com/go-redis/redis/v8"
 )

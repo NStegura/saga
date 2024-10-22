@@ -3,8 +3,9 @@ package payments
 import (
 	"context"
 	"fmt"
-	"github.com/NStegura/saga/tgbot/internal/clients/payments/api"
 	"time"
+
+	"github.com/NStegura/saga/tgbot/internal/clients/payments/api"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

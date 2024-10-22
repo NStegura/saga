@@ -35,6 +35,43 @@ runapi: ## Run api app
 protoc:
 	protoc --proto_path=./api --go_out=pkg/api --go_opt=paths=source_relative --go-grpc_out=pkg/api --go-grpc_opt=paths=source_relative api/productsapi.proto
 
+## TESTS
+
+MOCKS_DESTINATION=mocks
+.PHONY: mocks
+# put the files with interfaces you'd like to mock in prerequisites
+# wildcards are allowed
+mocks: ./internal/app/server/iproduct.go \
+	   ./internal/app/server/isystem.go
+	@echo "Generating mocks..."
+	@rm -rf $(MOCKS_DESTINATION)
+	@mkdir -p $(MOCKS_DESTINATION)
+	@for file in $^; do \
+  		input_path=$$file; \
+  		if  [ $file="internal/"* ]; then \
+  		  output_path=$$(echo "$$input_path" | sed 's/internal\///'); \
+  		else \
+  		  output_path=$input_path; \
+  		fi; \
+  		mockgen -source=$$file -destination=$(MOCKS_DESTINATION)/$$output_path; \
+  	done;
+
+.PHONY: test
+test:
+	go install gotest.tools/gotestsum@latest
+	gotestsum --format pkgname -- -coverprofile=cover.out ./...
+
+.PHONY: cover
+cover:
+	go test -v -coverpkg=./... -coverprofile=cover.out.tmp ./...
+	cat cover.out.tmp | \
+		grep -v "_easyjson.go" | \
+		grep -v "/mocks/" | \
+		grep -v "/storage/" | \
+		grep -v ".pb.go" \
+		> cover.out
+	rm cover.out.tmp
+	go tool cover -func cover.out
 
 ## LINTERS
 .PHONY: fmt

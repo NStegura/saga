@@ -49,7 +49,7 @@ func (c *InventoryConsumer) Start(ctx context.Context) error {
 			return fmt.Errorf("income consumer error: %w", err)
 		}
 		if ctx.Err() != nil {
-			c.logger.Warning("consumer ctx closed with err: %v", ctx.Err())
+			c.logger.Warningf("consumer ctx closed with err: %v", ctx.Err())
 			return nil
 		}
 	}

@@ -281,7 +281,7 @@ services:
       - orders-api
       - redis
     environment:
-      TG_BOT_TOKEN: 'your token'
+      TG_BOT_TOKEN: '7588716328:AAFpRkPVV_34C0_tahmCrOuQSKSQYudqEG8'
       REDIS_DSN: 'redis:6379'
       ORDER_CLI_CONN: 'orders-api:8081'
       PAYMENT_CLI_CONN: 'payments-api:8083'

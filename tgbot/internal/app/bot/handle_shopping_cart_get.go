@@ -2,8 +2,9 @@ package bot
 
 import (
 	"fmt"
-	tele "gopkg.in/telebot.v4"
 	"strings"
+
+	tele "gopkg.in/telebot.v4"
 )
 
 func (b *TgBot) handleGetShoppingCart() tele.HandlerFunc {

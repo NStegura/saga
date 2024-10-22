@@ -3,6 +3,7 @@ package products
 import (
 	"context"
 	"fmt"
+
 	"github.com/NStegura/saga/tgbot/internal/clients/products/api"
 
 	"github.com/golang/protobuf/ptypes/empty"

@@ -32,7 +32,7 @@ func (c *Cron) Start(ctx context.Context) error {
 			i++
 			c.logger.Infof("[OrderEventsWorker|%v] events push", i)
 			if err := c.pushEventsWorker.Run(ctx); err != nil {
-				c.logger.Error("OrderEventsWorker Run failed %v", err)
+				c.logger.Errorf("OrderEventsWorker Run failed: %s", err)
 				continue
 			}
 		case <-ctx.Done():

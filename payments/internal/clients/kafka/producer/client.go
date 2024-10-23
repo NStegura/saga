@@ -39,7 +39,7 @@ func (p *Producer) PushMsg(msg []byte, topic string) error {
 }
 
 func (p *Producer) PushMsgs(msgs [][]byte, topic string) error {
-	pms := make([]*sarama.ProducerMessage, len(msgs))
+	pms := make([]*sarama.ProducerMessage, 0, len(msgs))
 	for _, msg := range msgs {
 		pms = append(pms, &sarama.ProducerMessage{
 			Topic: topic,

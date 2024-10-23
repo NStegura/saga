@@ -43,7 +43,10 @@ MOCKS_DESTINATION=mocks
 # put the files with interfaces you'd like to mock in prerequisites
 # wildcards are allowed
 mocks: ./internal/app/server/ipayments.go \
-	   ./internal/app/server/isystem.go
+	   ./internal/app/server/isystem.go \
+	   ./internal/app/cron/workers/ijob.go \
+	   ./internal/app/consumer/icache.go \
+	   ./internal/app/consumer/ipayments.go
 	@echo "Generating mocks..."
 	@rm -rf $(MOCKS_DESTINATION)
 	@mkdir -p $(MOCKS_DESTINATION)
@@ -66,10 +69,9 @@ test:
 cover:
 	go test -v -coverpkg=./... -coverprofile=cover.out.tmp ./...
 	cat cover.out.tmp | \
-		grep -v "_easyjson.go" | \
-		grep -v "/mocks/" | \
 		grep -v "/storage/" | \
-		grep -v ".pb.go" \
+		grep -v ".pb.go" | \
+		grep -v "/cmd/" \
 		> cover.out
 	rm cover.out.tmp
 	go tool cover -func cover.out

@@ -16,6 +16,29 @@ cover:
 	go tool cover -func cover.out
 
 
+## TESTS
+
+MOCKS_DESTINATION=mocks
+.PHONY: mocks
+# put the files with interfaces you'd like to mock in prerequisites
+# wildcards are allowed
+mocks: ./internal/services/business/iordercli.go \
+	   ./internal/services/business/ipaymentcli.go \
+	   ./internal/services/business/iproductcli.go
+	@echo "Generating mocks..."
+	@rm -rf $(MOCKS_DESTINATION)
+	@mkdir -p $(MOCKS_DESTINATION)
+	@for file in $^; do \
+  		input_path=$$file; \
+  		if  [ $file="internal/"* ]; then \
+  		  output_path=$$(echo "$$input_path" | sed 's/internal\///'); \
+  		else \
+  		  output_path=$input_path; \
+  		fi; \
+  		mockgen -source=$$file -destination=$(MOCKS_DESTINATION)/$$output_path; \
+  	done;
+
+
 ## LINTERS
 .PHONY: fmt
 fmt:

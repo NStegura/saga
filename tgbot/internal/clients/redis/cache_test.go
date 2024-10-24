@@ -16,7 +16,8 @@ import (
 
 func TestCache_Get_Success(t *testing.T) {
 	mockRedis, mock := redismock.NewClientMock()
-	cache := &Cache{client: mockRedis}
+	cache := New("")
+	cache.client = mockRedis
 
 	userID := int64(12345)
 	userState := domain.NewUserState(userID)
@@ -33,7 +34,8 @@ func TestCache_Get_Success(t *testing.T) {
 
 func TestCache_Get_CacheMiss(t *testing.T) {
 	mockRedis, mock := redismock.NewClientMock()
-	cache := &Cache{client: mockRedis}
+	cache := New("")
+	cache.client = mockRedis
 
 	userID := int64(12345)
 	mock.ExpectGet(cache.keyFormat(userID)).RedisNil()
@@ -47,7 +49,8 @@ func TestCache_Get_CacheMiss(t *testing.T) {
 
 func TestCache_Get_Error(t *testing.T) {
 	mockRedis, mock := redismock.NewClientMock()
-	cache := &Cache{client: mockRedis}
+	cache := New("")
+	cache.client = mockRedis
 
 	userID := int64(12345)
 	mock.ExpectGet(cache.keyFormat(userID)).SetErr(errors.New("internal redis error"))
@@ -77,7 +80,8 @@ func TestCache_Set_Success(t *testing.T) {
 
 func TestCache_Set_Error(t *testing.T) {
 	mockRedis, mock := redismock.NewClientMock()
-	cache := &Cache{client: mockRedis}
+	cache := New("")
+	cache.client = mockRedis
 
 	userID := int64(12345)
 	userState := domain.NewUserState(userID)
@@ -94,7 +98,8 @@ func TestCache_Set_Error(t *testing.T) {
 
 func TestCache_Del_Success(t *testing.T) {
 	mockRedis, mock := redismock.NewClientMock()
-	cache := &Cache{client: mockRedis}
+	cache := New("")
+	cache.client = mockRedis
 
 	userID := int64(12345)
 	mock.ExpectDel(cache.keyFormat(userID)).SetVal(1)
@@ -107,7 +112,8 @@ func TestCache_Del_Success(t *testing.T) {
 
 func TestCache_Del_Error(t *testing.T) {
 	mockRedis, mock := redismock.NewClientMock()
-	cache := &Cache{client: mockRedis}
+	cache := New("")
+	cache.client = mockRedis
 
 	userID := int64(12345)
 	mock.ExpectDel(cache.keyFormat(userID)).SetErr(errors.New("redis delete error"))

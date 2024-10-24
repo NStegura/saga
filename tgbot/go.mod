@@ -5,6 +5,7 @@ go 1.22.0
 require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redismock/v8 v8.11.5
+	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.4
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sirupsen/logrus v1.6.0

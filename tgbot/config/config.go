@@ -19,23 +19,23 @@ type Config struct {
 }
 
 type TgBot struct {
-	Token string `envconfig:"TOKEN" required:"true" default:"7588716328:AAFpRkPVV_34C0_tahmCrOuQSKSQYudqEG8"` // Todo: put away default(Debug)
+	Token string `envconfig:"TOKEN" required:"true"`
 }
 
 type Redis struct {
-	DSN string `envconfig:"DSN" required:"true" default:"0.0.0.0:6379"` // Todo: put away default(Debug)
+	DSN string `envconfig:"DSN" required:"true" default:"0.0.0.0:6379"`
 }
 
 type OrderCli struct {
-	CONN string `envconfig:"CONN" required:"true" default:"0.0.0.0:8081"` // Todo: put away default(Debug)
+	CONN string `envconfig:"CONN" required:"true" default:"0.0.0.0:8081"`
 }
 
 type PaymentCli struct {
-	CONN string `envconfig:"CONN" required:"true" default:"0.0.0.0:8083"` // Todo: put away default(Debug)
+	CONN string `envconfig:"CONN" required:"true" default:"0.0.0.0:8083"`
 }
 
 type ProductCli struct {
-	CONN string `envconfig:"CONN" required:"true" default:"0.0.0.0:8082"` // Todo: put away default(Debug)
+	CONN string `envconfig:"CONN" required:"true" default:"0.0.0.0:8082"`
 }
 
 func New() (cfg Config, err error) {

@@ -1,3 +1,21 @@
+## TESTS
+
+.PHONY: test
+test:
+	go install gotest.tools/gotestsum@latest
+	gotestsum --format pkgname -- -coverprofile=cover.out ./...
+
+.PHONY: cover
+cover:
+	go test -v -coverpkg=./... -coverprofile=cover.out.tmp ./...
+	cat cover.out.tmp | \
+		grep -v ".pb.go" | \
+		grep -v "/cmd/" \
+		> cover.out
+	rm cover.out.tmp
+	go tool cover -func cover.out
+
+
 ## LINTERS
 .PHONY: fmt
 fmt:

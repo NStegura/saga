@@ -26,3 +26,6 @@ vendor/
 
 # Linters
 *.golangci.*
+
+# Local
+*.env

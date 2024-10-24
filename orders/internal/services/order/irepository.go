@@ -19,7 +19,7 @@ type EventRepository interface {
 	) (err error)
 }
 
-type OrderRepository interface {
+type orderRepository interface {
 	GetOrder(ctx context.Context, orderID int64) (order models.Order, err error)
 	GetOrders(ctx context.Context, userID int64) (orders []models.Order, err error)
 	CreateOrder(ctx context.Context, tx pgx.Tx, userID int64, description string) (orderID int64, err error)
@@ -27,7 +27,7 @@ type OrderRepository interface {
 	GetProductsByOrderId(ctx context.Context, orderID int64) (orderProduct []models.OrderProduct, err error)
 }
 
-type OrderStateRepository interface {
+type orderStateRepository interface {
 	CreateState(ctx context.Context, tx pgx.Tx, orderID int64, state stateModels.OrderStateStatus) (stateID int64, err error)
 	GetLastStateByOrderID(ctx context.Context, orderID int64) (state stateModels.OrderState, err error)
 	GetStatesByOrderID(ctx context.Context, orderID int64) (states []stateModels.OrderState, err error)
@@ -35,8 +35,8 @@ type OrderStateRepository interface {
 
 type Repository interface {
 	EventRepository
-	OrderRepository
-	OrderStateRepository
+	orderRepository
+	orderStateRepository
 	OpenTransaction(ctx context.Context) (tx pgx.Tx, err error)
 	Rollback(ctx context.Context, tx pgx.Tx) error
 	Commit(ctx context.Context, tx pgx.Tx) error

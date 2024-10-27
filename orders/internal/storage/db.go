@@ -14,9 +14,9 @@ import (
 )
 
 type DB struct {
-	orderRepo.OrderRepo
+	orderRepo.ORepo
 	eventRepo.EventRepo
-	stateRepo.StateRepo
+	stateRepo.SRepo
 	pool *pgxpool.Pool
 
 	logger *logrus.Logger
@@ -39,9 +39,9 @@ func New(
 	}
 
 	db := DB{
-		OrderRepo: orderRepo.New(logger, pool),
+		ORepo:     orderRepo.New(logger, pool),
 		EventRepo: event.NewEventRepository(logger),
-		StateRepo: stateRepo.New(logger, pool),
+		SRepo:     stateRepo.New(logger, pool),
 		pool:      pool,
 		logger:    logger,
 	}

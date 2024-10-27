@@ -116,7 +116,7 @@ func TestIncomeHandler_ConsumeClaim_Success(t *testing.T) {
 	mockSession.On("MarkMessage", mock.Anything, "").Return().Once()
 
 	mockCache.EXPECT().Get(context.Background(), message.IKey).Return(redis.ErrCacheMiss).Times(1)
-	mockOrder.EXPECT().CreateOrderState(context.Background(), message.OrderID, orderModels.RESERVE_CREATED).Return(nil).Times(1)
+	mockOrder.EXPECT().CreateOrderState(context.Background(), message.OrderID, orderModels.ReserveCreated).Return(nil).Times(1)
 	mockCache.EXPECT().Set(context.Background(), message.IKey).Return(nil).Times(1)
 
 	err := handler.ConsumeClaim(mockSession, mockClaim)
@@ -214,7 +214,7 @@ func TestIncomeHandler_ConsumeClaim_CreateOrderStateError(t *testing.T) {
 
 	mockCache.EXPECT().Get(context.Background(), message.IKey).Return(redis.ErrCacheMiss).Times(1)
 	mockOrder.EXPECT().CreateOrderState(
-		context.Background(), message.OrderID, orderModels.RESERVE_CREATED,
+		context.Background(), message.OrderID, orderModels.ReserveCreated,
 	).Return(errors.New("create order state error")).Times(1)
 
 	err := handler.ConsumeClaim(mockSession, mockClaim)

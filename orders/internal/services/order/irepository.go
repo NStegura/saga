@@ -23,12 +23,17 @@ type orderRepository interface {
 	GetOrder(ctx context.Context, orderID int64) (order models.Order, err error)
 	GetOrders(ctx context.Context, userID int64) (orders []models.Order, err error)
 	CreateOrder(ctx context.Context, tx pgx.Tx, userID int64, description string) (orderID int64, err error)
-	CreateProductOrder(ctx context.Context, tx pgx.Tx, orderId int64, productID int64, count int64) (ID int, err error)
-	GetProductsByOrderId(ctx context.Context, orderID int64) (orderProduct []models.OrderProduct, err error)
+	CreateProductOrder(ctx context.Context, tx pgx.Tx, orderID int64, productID int64, count int64) (ID int, err error)
+	GetProductsByOrderID(ctx context.Context, orderID int64) (orderProduct []models.OrderProduct, err error)
 }
 
 type orderStateRepository interface {
-	CreateState(ctx context.Context, tx pgx.Tx, orderID int64, state stateModels.OrderStateStatus) (stateID int64, err error)
+	CreateState(
+		ctx context.Context,
+		tx pgx.Tx,
+		orderID int64,
+		state stateModels.OrderStateStatus,
+	) (stateID int64, err error)
 	GetLastStateByOrderID(ctx context.Context, orderID int64) (state stateModels.OrderState, err error)
 	GetStatesByOrderID(ctx context.Context, orderID int64) (states []stateModels.OrderState, err error)
 }

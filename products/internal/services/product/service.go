@@ -129,41 +129,40 @@ func (p *Product) UpdateReserveStatus(ctx context.Context, orderID int64, status
 		_ = p.repo.Commit(ctx, tx)
 	}()
 
-	if status == true {
+	if status {
 		err = p.repo.UpdateReserveStatusByOrderID(ctx, tx, orderID, status)
 		if err != nil {
 			_ = p.repo.Rollback(ctx, tx)
 			return fmt.Errorf("failed to reserve status by order id: %w", err)
 		}
 		return nil
-	} else {
-		reserves, err := p.repo.GetReservesByOrderIDForUpdate(ctx, tx, orderID)
-		for _, reserve := range reserves {
-			if err != nil {
-				_ = p.repo.Rollback(ctx, tx)
-				return fmt.Errorf("failed to get reserves: %w", err)
-			}
-
-			product, err := p.repo.GetProductForUpdate(ctx, tx, reserve.ProductID)
-			if err != nil {
-				_ = p.repo.Rollback(ctx, tx)
-				return fmt.Errorf("failed to get product: %w", err)
-			}
-
-			resCount := product.Count + reserve.Count
-
-			err = p.repo.UpdateProductCount(ctx, tx, product.ID, resCount)
-			if err != nil {
-				_ = p.repo.Rollback(ctx, tx)
-				return fmt.Errorf("failed to update product count: %w", err)
-			}
-
-			err = p.repo.UpdateReserveStatusByID(ctx, tx, reserve.ID, false)
-			if err != nil {
-				_ = p.repo.Rollback(ctx, tx)
-				return fmt.Errorf("failed to update reserve status: %w", err)
-			}
-		}
-		return err
 	}
+	reserves, err := p.repo.GetReservesByOrderIDForUpdate(ctx, tx, orderID)
+	for _, reserve := range reserves {
+		if err != nil {
+			_ = p.repo.Rollback(ctx, tx)
+			return fmt.Errorf("failed to get reserves: %w", err)
+		}
+
+		product, err := p.repo.GetProductForUpdate(ctx, tx, reserve.ProductID)
+		if err != nil {
+			_ = p.repo.Rollback(ctx, tx)
+			return fmt.Errorf("failed to get product: %w", err)
+		}
+
+		resCount := product.Count + reserve.Count
+
+		err = p.repo.UpdateProductCount(ctx, tx, product.ID, resCount)
+		if err != nil {
+			_ = p.repo.Rollback(ctx, tx)
+			return fmt.Errorf("failed to update product count: %w", err)
+		}
+
+		err = p.repo.UpdateReserveStatusByID(ctx, tx, reserve.ID, false)
+		if err != nil {
+			_ = p.repo.Rollback(ctx, tx)
+			return fmt.Errorf("failed to update reserve status: %w", err)
+		}
+	}
+	return err
 }

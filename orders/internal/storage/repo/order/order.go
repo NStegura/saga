@@ -13,17 +13,22 @@ import (
 	"github.com/NStegura/saga/orders/internal/storage/repo/order/models"
 )
 
-type OrderRepo struct {
+type ORepo struct {
 	pool *pgxpool.Pool
 
 	logger *logrus.Logger
 }
 
-func New(logger *logrus.Logger, pool *pgxpool.Pool) OrderRepo {
-	return OrderRepo{logger: logger, pool: pool}
+func New(logger *logrus.Logger, pool *pgxpool.Pool) ORepo {
+	return ORepo{logger: logger, pool: pool}
 }
 
-func (r *OrderRepo) CreateOrder(ctx context.Context, tx pgx.Tx, userID int64, description string) (orderID int64, err error) {
+func (r *ORepo) CreateOrder(
+	ctx context.Context,
+	tx pgx.Tx,
+	userID int64,
+	description string,
+) (orderID int64, err error) {
 	const query = `
 		INSERT INTO "order" (user_id, description) 
 		VALUES ($1, $2) 
@@ -40,7 +45,13 @@ func (r *OrderRepo) CreateOrder(ctx context.Context, tx pgx.Tx, userID int64, de
 	return
 }
 
-func (r *OrderRepo) CreateProductOrder(ctx context.Context, tx pgx.Tx, orderId int64, productID int64, count int64) (ID int, err error) {
+func (r *ORepo) CreateProductOrder(
+	ctx context.Context,
+	tx pgx.Tx,
+	orderID int64,
+	productID int64,
+	count int64,
+) (id int, err error) {
 	const query = `
 		INSERT INTO "product" (order_id, product_id, count) 
 		VALUES ($1, $2, $3)
@@ -48,15 +59,15 @@ func (r *OrderRepo) CreateProductOrder(ctx context.Context, tx pgx.Tx, orderId i
 	`
 
 	err = tx.QueryRow(ctx, query,
-		orderId, productID, count,
-	).Scan(&ID)
+		orderID, productID, count,
+	).Scan(&id)
 	if err != nil {
-		return ID, fmt.Errorf("failed to create product-order: %w", err)
+		return id, fmt.Errorf("failed to create product-order: %w", err)
 	}
 	return
 }
 
-func (r *OrderRepo) GetOrder(ctx context.Context, orderID int64) (order models.Order, err error) {
+func (r *ORepo) GetOrder(ctx context.Context, orderID int64) (order models.Order, err error) {
 	const query = `
 		SELECT id, description
 		FROM "order"
@@ -77,21 +88,20 @@ func (r *OrderRepo) GetOrder(ctx context.Context, orderID int64) (order models.O
 	return
 }
 
-func (r *OrderRepo) GetOrders(ctx context.Context, userID int64) (orders []models.Order, err error) {
+func (r *ORepo) GetOrders(ctx context.Context, userID int64) (orders []models.Order, err error) {
 	const query = `
 		SELECT id, description
 		FROM "order"
 		WHERE user_id = $1;
 	`
 	rows, err := r.pool.Query(ctx, query, userID)
-	defer rows.Close()
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errs.ErrNotFound
 		}
 		return nil, fmt.Errorf("failed to get products: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var order models.Order
@@ -107,21 +117,23 @@ func (r *OrderRepo) GetOrders(ctx context.Context, userID int64) (orders []model
 	return orders, nil
 }
 
-func (r *OrderRepo) GetProductsByOrderId(ctx context.Context, orderID int64) (orderProduct []models.OrderProduct, err error) {
+func (r *ORepo) GetProductsByOrderID(
+	ctx context.Context,
+	orderID int64,
+) (orderProduct []models.OrderProduct, err error) {
 	const query = `
 		SELECT id, order_id, product_id, count
 		FROM "product"
 		WHERE order_id = $1;
 	`
 	rows, err := r.pool.Query(ctx, query, orderID)
-	defer rows.Close()
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errs.ErrNotFound
 		}
 		return nil, fmt.Errorf("failed to get products: %w", err)
 	}
+	defer rows.Close()
 
 	var orderProducts []models.OrderProduct
 	for rows.Next() {

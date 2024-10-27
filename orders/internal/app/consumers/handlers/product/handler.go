@@ -51,9 +51,9 @@ func (i *IncomeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 
 		switch message.Status {
 		case models.FAILED:
-			state = orderModels.RESERVE_FAILED
+			state = orderModels.ReserveFailed
 		case models.CREATED:
-			state = orderModels.RESERVE_CREATED
+			state = orderModels.ReserveCreated
 		default:
 			i.logger.Infof("product status: %s, continue", message.Status)
 			continue

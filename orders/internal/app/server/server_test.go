@@ -169,7 +169,7 @@ func TestGRPCServer_GetOrder_Success(t *testing.T) {
 	defer th.finish()
 
 	var orderID int64 = 1
-	state := models.ORDER_CREATED
+	state := models.OrderCreated
 	description := "test order"
 	orderProducts := []models.OrderProduct{
 		{ProductID: 1, Count: 2},
@@ -233,11 +233,11 @@ func TestGRPCServer_GetOrderStates_Success(t *testing.T) {
 	var orderID int64 = 1
 	orderStates := []models.State{
 		{
-			State:     models.ORDER_CREATED,
+			State:     models.OrderCreated,
 			CreatedAt: time.Now(),
 		},
 		{
-			State:     models.RESERVE_CREATED,
+			State:     models.ReserveCreated,
 			CreatedAt: time.Now().Add(10 * time.Minute),
 		},
 	}
@@ -248,8 +248,8 @@ func TestGRPCServer_GetOrderStates_Success(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Len(t, resp.OrderStates, 2)
-	assert.Equal(t, string(models.ORDER_CREATED), resp.OrderStates[0].State)
-	assert.Equal(t, string(models.RESERVE_CREATED), resp.OrderStates[1].State)
+	assert.Equal(t, string(models.OrderCreated), resp.OrderStates[0].State)
+	assert.Equal(t, string(models.ReserveCreated), resp.OrderStates[1].State)
 }
 
 func TestGRPCServer_GetOrderStates_NotFound(t *testing.T) {
@@ -299,12 +299,12 @@ func TestGRPCServer_GetOrders_Success(t *testing.T) {
 		{
 			OrderID:     1,
 			Description: "Test order 1",
-			State:       models.ORDER_CREATED,
+			State:       models.OrderCreated,
 		},
 		{
 			OrderID:     2,
 			Description: "Test order 2",
-			State:       models.ORDER_CREATED,
+			State:       models.OrderCreated,
 		},
 	}
 	th.mockOrder.EXPECT().GetOrders(gomock.Any(), userID).Return(orders, nil)

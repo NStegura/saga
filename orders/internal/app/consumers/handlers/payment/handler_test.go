@@ -106,7 +106,7 @@ func TestIncomeHandler_ConsumeClaim_Success(t *testing.T) {
 	key := uuid.New()
 	message := models.PaymentMessage{
 		OrderID: 12345,
-		Status:  models.COMPLETED,
+		Status:  models.Completed,
 		IKey:    key,
 	}
 
@@ -116,7 +116,7 @@ func TestIncomeHandler_ConsumeClaim_Success(t *testing.T) {
 	mockSession.On("MarkMessage", mock.Anything, "").Return().Once()
 
 	mockCache.EXPECT().Get(context.Background(), message.IKey).Return(redis.ErrCacheMiss).Times(1)
-	mockOrder.EXPECT().CreateOrderState(context.Background(), message.OrderID, orderModels.PAYMENT_COMPLETED).Return(nil).Times(1)
+	mockOrder.EXPECT().CreateOrderState(context.Background(), message.OrderID, orderModels.PaymentCompleted).Return(nil).Times(1)
 	mockCache.EXPECT().Set(context.Background(), message.IKey).Return(nil).Times(1)
 
 	err := handler.ConsumeClaim(mockSession, mockClaim)
@@ -142,7 +142,7 @@ func TestIncomeHandler_ConsumeClaim_IdempotentKey(t *testing.T) {
 	key := uuid.New()
 	message := models.PaymentMessage{
 		OrderID: 12345,
-		Status:  models.COMPLETED,
+		Status:  models.Completed,
 		IKey:    key,
 	}
 
@@ -204,7 +204,7 @@ func TestIncomeHandler_ConsumeClaim_CreateOrderStateError(t *testing.T) {
 	key := uuid.New()
 	message := models.PaymentMessage{
 		OrderID: 12345,
-		Status:  models.COMPLETED,
+		Status:  models.Completed,
 		IKey:    key,
 	}
 
@@ -214,7 +214,7 @@ func TestIncomeHandler_ConsumeClaim_CreateOrderStateError(t *testing.T) {
 
 	mockCache.EXPECT().Get(context.Background(), message.IKey).Return(redis.ErrCacheMiss).Times(1)
 	mockOrder.EXPECT().CreateOrderState(
-		context.Background(), message.OrderID, orderModels.PAYMENT_COMPLETED,
+		context.Background(), message.OrderID, orderModels.PaymentCompleted,
 	).Return(errors.New("create order state error")).Times(1)
 
 	err := handler.ConsumeClaim(mockSession, mockClaim)

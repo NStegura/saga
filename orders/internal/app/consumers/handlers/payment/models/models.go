@@ -5,9 +5,9 @@ import "github.com/google/uuid"
 type PaymentMessageStatus string
 
 const (
-	CREATED   PaymentMessageStatus = "CREATED"
-	FAILED    PaymentMessageStatus = "FAILED"
-	COMPLETED PaymentMessageStatus = "COMPLETED"
+	Created   PaymentMessageStatus = "CREATED"
+	Failed    PaymentMessageStatus = "FAILED"
+	Completed PaymentMessageStatus = "COMPLETED"
 )
 
 type PaymentMessage struct {

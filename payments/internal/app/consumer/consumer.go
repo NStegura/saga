@@ -10,7 +10,6 @@ import (
 
 type InventoryConsumer struct {
 	name        string
-	ctx         context.Context
 	topics      []string
 	consumerCli sarama.ConsumerGroup
 	payment     Payments

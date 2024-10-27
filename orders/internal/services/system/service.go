@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/sirupsen/logrus"
 )
@@ -17,7 +18,7 @@ func New(repo Repository, logger *logrus.Logger) *System {
 
 func (s *System) Ping(ctx context.Context) error {
 	if err := s.repo.Ping(ctx); err != nil {
-		return err
+		return fmt.Errorf("failed to ping: %w", err)
 	}
 	return nil
 }

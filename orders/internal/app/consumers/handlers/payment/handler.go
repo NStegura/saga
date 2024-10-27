@@ -50,12 +50,12 @@ func (i *IncomeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 		ctx := context.Background()
 
 		switch message.Status {
-		case models.CREATED:
-			state = orderModels.PAYMENT_CREATED
-		case models.FAILED:
-			state = orderModels.PAYMENT_FAILED
-		case models.COMPLETED:
-			state = orderModels.PAYMENT_COMPLETED
+		case models.Created:
+			state = orderModels.PaymentCreated
+		case models.Failed:
+			state = orderModels.PaymentFailed
+		case models.Completed:
+			state = orderModels.PaymentCompleted
 		default:
 			i.logger.Infof("unknown payment status: %s, continue", message.Status)
 			continue

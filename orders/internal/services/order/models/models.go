@@ -10,14 +10,14 @@ type OrderMessageStatus string
 type OrderState string
 
 const (
-	CREATED OrderMessageStatus = "CREATED"
+	Created OrderMessageStatus = "CREATED"
 
-	ORDER_CREATED     OrderState = "ORDER_CREATED"
-	RESERVE_CREATED   OrderState = "RESERVE_CREATED"
-	RESERVE_FAILED    OrderState = "RESERVE_FAILED"
-	PAYMENT_CREATED   OrderState = "PAYMENT_CREATED"
-	PAYMENT_FAILED    OrderState = "PAYMENT_FAILED"
-	PAYMENT_COMPLETED OrderState = "PAYMENT_COMPLETED"
+	OrderCreated     OrderState = "ORDER_CREATED"
+	ReserveCreated   OrderState = "RESERVE_CREATED"
+	ReserveFailed    OrderState = "RESERVE_FAILED"
+	PaymentCreated   OrderState = "PAYMENT_CREATED"
+	PaymentFailed    OrderState = "PAYMENT_FAILED"
+	PaymentCompleted OrderState = "PAYMENT_COMPLETED"
 )
 
 type OrderMessage struct {

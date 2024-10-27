@@ -40,9 +40,9 @@ func (c *Consumer) Start(ctx context.Context) error {
 			c.logger.Errorf("income consumer error: %v", err)
 			return fmt.Errorf("income consumer error: %w", err)
 		}
-		if ctx.Err() != nil {
+		if err := ctx.Err(); err != nil {
 			c.logger.Warningf("consumer ctx closed with err: %s", ctx.Err())
-			return nil
+			return fmt.Errorf("ctx err: %w", err)
 		}
 	}
 }

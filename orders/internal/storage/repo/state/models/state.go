@@ -9,12 +9,12 @@ import (
 type OrderStateStatus int
 
 const (
-	ORDER_CREATED OrderStateStatus = iota + 1
-	RESERVE_CREATED
-	RESERVE_FAILED
-	PAYMENT_CREATED
-	PAYMENT_FAILED
-	PAYMENT_COMPLETED
+	OrderCreated OrderStateStatus = iota + 1
+	ReserveCreated
+	ReserveFailed
+	PaymentCreated
+	PaymentFailed
+	PaymentCompleted
 )
 
 func (ps OrderStateStatus) String() string {
@@ -37,17 +37,17 @@ func (ps *OrderStateStatus) Scan(value any) error {
 
 	switch strValue {
 	case "ORDER_CREATED":
-		*ps = ORDER_CREATED
+		*ps = OrderCreated
 	case "RESERVE_CREATED":
-		*ps = RESERVE_CREATED
+		*ps = ReserveCreated
 	case "RESERVE_FAILED":
-		*ps = RESERVE_FAILED
+		*ps = ReserveFailed
 	case "PAYMENT_CREATED":
-		*ps = PAYMENT_CREATED
+		*ps = PaymentCreated
 	case "PAYMENT_FAILED":
-		*ps = PAYMENT_FAILED
+		*ps = PaymentFailed
 	case "PAYMENT_COMPLETED":
-		*ps = PAYMENT_COMPLETED
+		*ps = PaymentCompleted
 	default:
 		return fmt.Errorf("invalid OrderStateStatus: %s", strValue)
 	}

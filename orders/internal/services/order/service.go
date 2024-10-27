@@ -60,7 +60,7 @@ func (p *Order) GetOrder(ctx context.Context, orderID int64) (o models.Order, er
 		return o, fmt.Errorf("failed to get state: %w", err)
 	}
 
-	orderProducts, err := p.repo.GetProductsByOrderId(ctx, orderID)
+	orderProducts, err := p.repo.GetProductsByOrderID(ctx, orderID)
 	if err != nil {
 		return o, fmt.Errorf("failed to get order products: %w", err)
 	}
@@ -113,7 +113,7 @@ func (p *Order) CreateOrder(
 	orderMessage := models.OrderMessage{
 		IKey:    uuid.New(),
 		OrderID: orderID,
-		Status:  models.CREATED,
+		Status:  models.Created,
 	}
 	payload, err := json.Marshal(orderMessage)
 	if err != nil {
@@ -126,7 +126,7 @@ func (p *Order) CreateOrder(
 		return orderID, fmt.Errorf("failed to create event: %w", err)
 	}
 
-	_, err = p.repo.CreateState(ctx, tx, orderID, dbStateModels.ORDER_CREATED)
+	_, err = p.repo.CreateState(ctx, tx, orderID, dbStateModels.OrderCreated)
 	if err != nil {
 		_ = p.repo.Rollback(ctx, tx)
 		return orderID, fmt.Errorf("failed to update pay status: %w", err)

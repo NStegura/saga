@@ -13,17 +13,22 @@ import (
 	"github.com/NStegura/saga/orders/internal/storage/repo/state/models"
 )
 
-type StateRepo struct {
+type SRepo struct {
 	pool *pgxpool.Pool
 
 	logger *logrus.Logger
 }
 
-func New(logger *logrus.Logger, pool *pgxpool.Pool) StateRepo {
-	return StateRepo{logger: logger, pool: pool}
+func New(logger *logrus.Logger, pool *pgxpool.Pool) SRepo {
+	return SRepo{logger: logger, pool: pool}
 }
 
-func (r *StateRepo) CreateState(ctx context.Context, tx pgx.Tx, orderID int64, state models.OrderStateStatus) (stateID int64, err error) {
+func (r *SRepo) CreateState(
+	ctx context.Context,
+	tx pgx.Tx,
+	orderID int64,
+	state models.OrderStateStatus,
+) (stateID int64, err error) {
 	const query = `
 		INSERT INTO "state" (order_id, state) 
 		VALUES ($1, $2) 
@@ -40,7 +45,7 @@ func (r *StateRepo) CreateState(ctx context.Context, tx pgx.Tx, orderID int64, s
 	return
 }
 
-func (r *StateRepo) GetLastStateByOrderID(ctx context.Context, orderID int64) (state models.OrderState, err error) {
+func (r *SRepo) GetLastStateByOrderID(ctx context.Context, orderID int64) (state models.OrderState, err error) {
 	const query = `
 		SELECT id, order_id, state, created_at
 		FROM "state"
@@ -65,7 +70,7 @@ func (r *StateRepo) GetLastStateByOrderID(ctx context.Context, orderID int64) (s
 	return
 }
 
-func (r *StateRepo) GetStatesByOrderID(ctx context.Context, orderID int64) (states []models.OrderState, err error) {
+func (r *SRepo) GetStatesByOrderID(ctx context.Context, orderID int64) (states []models.OrderState, err error) {
 	const query = `
 		SELECT id, order_id, state, created_at
 		FROM "state"
@@ -73,14 +78,13 @@ func (r *StateRepo) GetStatesByOrderID(ctx context.Context, orderID int64) (stat
 		ORDER BY created_at;
 	`
 	rows, err := r.pool.Query(ctx, query, orderID)
-	defer rows.Close()
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errs.ErrNotFound
 		}
 		return nil, fmt.Errorf("failed to get products: %w", err)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var state models.OrderState

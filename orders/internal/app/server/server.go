@@ -137,7 +137,7 @@ func (s *GRPCServer) GetOrder(ctx context.Context, req *pb.OrderId) (*pb.OrderOu
 		OrderProducts: orderProductsOut,
 		Description:   order.Description,
 		State:         string(order.State),
-	}, err
+	}, nil
 }
 
 func (s *GRPCServer) GetOrderStates(ctx context.Context, req *pb.OrderId) (*pb.States, error) {
@@ -182,7 +182,7 @@ func (s *GRPCServer) GetOrders(ctx context.Context, req *pb.UserId) (*pb.Orders,
 
 func (s *GRPCServer) GetPing(ctx context.Context, _ *empty.Empty) (*pb.Pong, error) {
 	if err := s.system.Ping(ctx); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed ping: %w", err)
 	}
 	return &pb.Pong{
 		Pong: true,

@@ -67,14 +67,14 @@ func runServer() error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() (err error) {
 		if err = grpcServer.Start(ctx); err != nil {
-			return err
+			return fmt.Errorf("failed to start server: %w", err)
 		}
 		return
 	})
 
 	g.Go(func() (err error) {
 		if err = cronTab.Start(ctx); err != nil {
-			return err
+			return fmt.Errorf("failed to start cron: %w", err)
 		}
 		return
 	})
@@ -108,7 +108,7 @@ func runServer() error {
 	})
 
 	if err = g.Wait(); err != nil {
-		return err
+		return fmt.Errorf("failed to wait: %w", err)
 	}
 	return nil
 }

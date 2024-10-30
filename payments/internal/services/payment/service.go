@@ -56,10 +56,14 @@ func (p *Payment) CreatePayment(ctx context.Context, orderID int64) (id int64, e
 		_ = p.repo.Rollback(ctx, tx)
 		return id, fmt.Errorf("failed to create event: %w", err)
 	}
-	return payID, err
+	return payID, nil
 }
 
-func (p *Payment) UpdatePaymentStatus(ctx context.Context, orderID int64, status models.PaymentMessageStatus) (err error) {
+func (p *Payment) UpdatePaymentStatus(
+	ctx context.Context,
+	orderID int64,
+	status models.PaymentMessageStatus,
+) (err error) {
 	var dbStatus dbModels.PaymentStatus
 
 	tx, err := p.repo.OpenTransaction(ctx)
@@ -76,11 +80,12 @@ func (p *Payment) UpdatePaymentStatus(ctx context.Context, orderID int64, status
 		return fmt.Errorf("failed to get payment by order id for update: %w", err)
 	}
 
-	if status == models.COMPLETED {
+	switch status {
+	case models.COMPLETED:
 		dbStatus = dbModels.COMPLETED
-	} else if status == models.FAILED {
+	case models.FAILED:
 		dbStatus = dbModels.FAILED
-	} else {
+	default:
 		_ = p.repo.Rollback(ctx, tx)
 		return fmt.Errorf("unknown status")
 	}

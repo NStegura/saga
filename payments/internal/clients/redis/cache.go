@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 )
 
+const cacheTTL = time.Minute * 15
+
 type IdempotentCache struct {
 	client *redis.Client
 }
@@ -35,10 +37,14 @@ func (c *IdempotentCache) Get(ctx context.Context, key uuid.UUID) (err error) {
 }
 
 func (c *IdempotentCache) Set(ctx context.Context, key uuid.UUID) (err error) {
-	return c.client.Set(
+	err = c.client.Set(
 		ctx,
 		key.String(),
 		"",
-		time.Minute*15,
+		cacheTTL,
 	).Err()
+	if err != nil {
+		return fmt.Errorf("failed to set: %w", err)
+	}
+	return nil
 }

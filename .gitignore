@@ -19,13 +19,13 @@
 vendor/
 
 # IDEs directories
-/.idea/
+*.idea/
 .vscode
 
 *tmp
 
 # Linters
-*.golangci.*
+*/.golangci.*
 
 # Local
 *.env

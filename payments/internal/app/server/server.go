@@ -30,7 +30,13 @@ type GRPCServer struct {
 	logger *logrus.Logger
 }
 
-func New(cfg config.Server, p Payments, s System, logger *logrus.Logger, opts ...grpc.ServerOption) (*GRPCServer, error) {
+func New(
+	cfg config.Server,
+	p Payments,
+	s System,
+	logger *logrus.Logger,
+	opts ...grpc.ServerOption,
+) (*GRPCServer, error) {
 	grpcServer := grpc.NewServer(opts...)
 
 	server := &GRPCServer{

@@ -79,7 +79,7 @@ func (r *ReserveRepo) UpdateReserveStatusByOrderID(
 func (r *ReserveRepo) UpdateReserveStatusByID(
 	ctx context.Context,
 	tx pgx.Tx,
-	ID int64,
+	id int64,
 	status bool,
 ) (err error) {
 	const query = `
@@ -89,7 +89,7 @@ func (r *ReserveRepo) UpdateReserveStatusByID(
 	`
 
 	cmd, err := tx.Exec(ctx, query,
-		ID,
+		id,
 		status,
 	)
 	if err != nil {
@@ -115,6 +115,9 @@ func (r *ReserveRepo) GetReservesByOrderIDForUpdate(
 		FOR UPDATE;
 	`
 	rows, err := tx.Query(ctx, query, orderID)
+	if err != nil {
+		return reserves, fmt.Errorf("failed to query: %w", err)
+	}
 	defer rows.Close()
 
 	for rows.Next() {

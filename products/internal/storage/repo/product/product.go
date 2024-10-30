@@ -123,7 +123,6 @@ func (r *ProductRepo) GetProduct(
 }
 
 func (r *ProductRepo) UpdateProductCount(ctx context.Context, tx pgx.Tx, productID, count int64) (err error) {
-
 	const query = `
 		update product
 		set	count = $2

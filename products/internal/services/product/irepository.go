@@ -42,7 +42,7 @@ type Repository interface {
 	UpdateReserveStatusByID(
 		ctx context.Context,
 		tx pgx.Tx,
-		ID int64,
+		id int64,
 		status bool,
 	) (err error)
 	GetReservesByOrderIDForUpdate(

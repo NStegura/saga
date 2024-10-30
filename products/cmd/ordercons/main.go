@@ -71,7 +71,7 @@ func runConsumer() error {
 
 	g.Go(func() (err error) {
 		if err = cons.Start(ctx); err != nil {
-			return err
+			return fmt.Errorf("failed to start ctx: %w", err)
 		}
 		return
 	})
@@ -82,12 +82,15 @@ func runConsumer() error {
 
 		shutdownTimeoutCtx, cancelShutdownTimeoutCtx := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
 		defer cancelShutdownTimeoutCtx()
-
-		return cons.Shutdown(shutdownTimeoutCtx)
+		err = cons.Shutdown(shutdownTimeoutCtx)
+		if err != nil {
+			return fmt.Errorf("failed to shutdown consumer: %w", err)
+		}
+		return
 	})
 
 	if err = g.Wait(); err != nil {
-		return err
+		return fmt.Errorf("failed to wait: %w", err)
 	}
 	return nil
 }

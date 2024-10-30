@@ -138,12 +138,12 @@ func (p *Product) UpdateReserveStatus(ctx context.Context, orderID int64, status
 		return nil
 	}
 	reserves, err := p.repo.GetReservesByOrderIDForUpdate(ctx, tx, orderID)
-	for _, reserve := range reserves {
-		if err != nil {
-			_ = p.repo.Rollback(ctx, tx)
-			return fmt.Errorf("failed to get reserves: %w", err)
-		}
+	if err != nil {
+		_ = p.repo.Rollback(ctx, tx)
+		return fmt.Errorf("failed to get reserves: %w", err)
+	}
 
+	for _, reserve := range reserves {
 		product, err := p.repo.GetProductForUpdate(ctx, tx, reserve.ProductID)
 		if err != nil {
 			_ = p.repo.Rollback(ctx, tx)
@@ -164,5 +164,5 @@ func (p *Product) UpdateReserveStatus(ctx context.Context, orderID int64, status
 			return fmt.Errorf("failed to update reserve status: %w", err)
 		}
 	}
-	return err
+	return nil
 }

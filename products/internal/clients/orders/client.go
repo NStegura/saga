@@ -32,12 +32,12 @@ func New(addr string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GetProductsToReserve(OrderID int64) (ps []Product, err error) {
+func (c *Client) GetProductsToReserve(orderID int64) (ps []Product, err error) {
 	ctx := metadata.AppendToOutgoingContext(context.Background(),
 		"sender", "productService",
 		"when", time.Now().Format(time.RFC3339),
 	)
-	order, err := c.client.GetOrder(ctx, &api.OrderId{OrderId: OrderID})
+	order, err := c.client.GetOrder(ctx, &api.OrderId{OrderId: orderID})
 	if err != nil {
 		return ps, fmt.Errorf("failed to get order: %w", err)
 	}

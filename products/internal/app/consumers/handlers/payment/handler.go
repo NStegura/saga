@@ -48,11 +48,12 @@ func (i *IncomeHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 		i.logger.Infof("Payment event: %v", message)
 		ctx := context.Background()
 
-		if message.Status == models.FAILED {
+		switch message.Status {
+		case models.FAILED:
 			status = false
-		} else if message.Status == models.COMPLETED {
+		case models.COMPLETED:
 			status = true
-		} else {
+		default:
 			i.logger.Infof("unknown payment status: %s, continue", message.Status)
 			continue
 		}
